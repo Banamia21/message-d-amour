@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fria.ville — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root { --bg:#0a0f0d; --surface:#111a15; --surface2:#182010; --border:#1e2e22; --vert:#22c55e; --or:#f59e0b; --rouge:#ef4444; --bleu:#3b82f6; --violet:#8b5cf6; --texte:#e8f5ee; --texte-dim:#6b8f76; --card:#0f1a12; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Instrument Sans',sans-serif; background:var(--bg); color:var(--texte); min-height:100vh; }
+  .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg); position:relative; overflow:hidden; }
+  .login-screen::before { content:''; position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(34,197,94,0.08) 0%,transparent 70%); top:-200px; right:-100px; }
+  .login-box { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:3rem; width:100%; max-width:420px; position:relative; z-index:1; animation:fadeUp 0.5s ease; }
+  .login-logo { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; color:var(--texte); margin-bottom:0.2rem; }
+  .login-logo span { color:var(--vert); }
+  .login-subtitle { color:var(--texte-dim); font-size:0.85rem; margin-bottom:2rem; }
+  .login-badge { display:inline-flex; align-items:center; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:var(--vert); padding:0.3rem 0.8rem; border-radius:50px; font-size:0.75rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:1.5rem; }
+  .fgl { margin-bottom:1.2rem; }
+  .fgl label { display:block; font-size:0.8rem; font-weight:600; color:var(--texte-dim); margin-bottom:0.5rem; letter-spacing:0.5px; text-transform:uppercase; }
+  .fgl input { width:100%; padding:0.8rem 1rem; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:var(--texte); font-family:'Instrument Sans',sans-serif; font-size:0.95rem; outline:none; transition:border-color 0.2s; }
+  .fgl input:focus { border-color:var(--vert); }
+  .login-btn { width:100%; padding:0.9rem; background:var(--vert); color:#000; border:none; border-radius:10px; font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+  .login-btn:hover { background:#16a34a; transform:translateY(-1px); }
+  .login-error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:0.7rem 1rem; border-radius:8px; font-size:0.85rem; margin-top:1rem; display:none; }
+  .login-hint { margin-top:1.5rem; padding:1rem; background:rgba(34,197,94,0.05); border:1px dashed rgba(34,197,94,0.2); border-radius:10px; font-size:0.8rem; color:var(--texte-dim); line-height:1.6; }
+  .login-hint strong { color:var(--vert); }
+  .admin-screen { display:none; min-height:100vh; }
+  .sidebar { position:fixed; left:0; top:0; bottom:0; width:240px; background:var(--surface); border-right:1px solid var(--border); padding:1.5rem; display:flex; flex-direction:column; z-index:50; }
+  .sidebar-logo { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:var(--texte); margin-bottom:0.2rem; }
+  .sidebar-logo span { color:var(--vert); }
+  .sidebar-role { font-size:0.72rem; color:var(--texte-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:2rem; }
+  .nav-label { font-size:0.68rem; color:var(--texte-dim); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; margin-bottom:0.5rem; padding:0 0.5rem; }
+  .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 0.8rem; border-radius:10px; color:var(--texte-dim); font-size:0.88rem; cursor:pointer; transition:all 0.15s; margin-bottom:0.2rem; }
+  .nav-item:hover { background:var(--surface2); color:var(--texte); }
+  .nav-item.active { background:rgba(34,197,94,0.12); color:var(--vert); }
+  .nav-badge { margin-left:auto; background:var(--rouge); color:white; font-size:0.65rem; font-weight:700; padding:0.1rem 0.45rem; border-radius:50px; display:none; }
+  .logout-btn { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 0.8rem; border-radius:10px; color:var(--rouge); font-size:0.88rem; cursor:pointer; background:none; border:none; font-family:'Instrument Sans',sans-serif; width:100%; transition:background 0.15s; }
+  .logout-btn:hover { background:rgba(239,68,68,0.1); }
+  .main-content { margin-left:240px; padding:2rem; min-height:100vh; }
+  .page { display:none; }
+  .page.active { display:block; animation:fadeUp 0.3s ease; }
+  .page-header { margin-bottom:2rem; }
+  .page-title { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; color:var(--texte); }
+  .page-sub { color:var(--texte-dim); font-size:0.9rem; margin-top:0.3rem; }
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.4rem; transition:border-color 0.2s; }
+  .stat-card:hover { border-color:var(--vert); }
+  .stat-icon { font-size:1.5rem; margin-bottom:0.8rem; }
+  .stat-value { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--texte); line-height:1; }
+  .stat-label { color:var(--texte-dim); font-size:0.82rem; margin-top:0.3rem; }
+  .stat-change { margin-top:0.5rem; font-size:0.75rem; font-weight:600; }
+  .stat-change.up { color:var(--vert); }
+  .stat-change.warn { color:var(--or); }
+  .table-container { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:1.5rem; }
+  .table-header { display:flex; align-items:center; justify-content:space-between; padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:0.8rem; }
+  .table-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; }
+  .search-input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.5rem 1rem; color:var(--texte); font-family:'Instrument Sans',sans-serif; font-size:0.85rem; outline:none; width:220px; transition:border-color 0.2s; }
+  .search-input:focus { border-color:var(--vert); }
+  .search-input::placeholder { color:var(--texte-dim); }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:0.8rem 1.5rem; font-size:0.72rem; color:var(--texte-dim); text-transform:uppercase; letter-spacing:1px; font-weight:600; border-bottom:1px solid var(--border); }
+  td { padding:1rem 1.5rem; border-bottom:1px solid rgba(30,46,34,0.5); font-size:0.88rem; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(34,197,94,0.03); }
+  .status-badge { padding:0.25rem 0.7rem; border-radius:50px; font-size:0.72rem; font-weight:600; }
+  .s-pending { background:rgba(245,158,11,0.15); color:var(--or); }
+  .s-approved { background:rgba(34,197,94,0.15); color:var(--vert); }
+  .s-rejected { background:rgba(239,68,68,0.15); color:var(--rouge); }
+  .action-btns { display:flex; gap:0.5rem; flex-wrap:wrap; }
+  .btn-sm { padding:0.3rem 0.7rem; border-radius:6px; border:none; cursor:pointer; font-family:'Instrument Sans',sans-serif; font-size:0.78rem; font-weight:600; transition:all 0.15s; }
+  .b-approve { background:rgba(34,197,94,0.15); color:var(--vert); }
+  .b-approve:hover { background:var(--vert); color:#000; }
+  .b-reject { background:rgba(239,68,68,0.15); color:var(--rouge); }
+  .b-reject:hover { background:var(--rouge); color:white; }
+  .b-delete { background:rgba(239,68,68,0.15); color:var(--rouge); }
+  .b-delete:hover { background:var(--rouge); color:white; }
+  .empty-state { text-align:center; padding:3rem; color:var(--texte-dim); font-size:0.9rem; }
+  .empty-icon { font-size:2.5rem; margin-bottom:0.5rem; }
+  .loading-state { text-align:center; padding:3rem; color:var(--texte-dim); }
+  .spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--vert); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 0.8rem; }
+  .confirm-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; display:none; align-items:center; justify-content:center; }
+  .confirm-overlay.open { display:flex; }
+  .confirm-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; max-width:380px; width:90%; animation:scaleIn 0.2s ease; }
+  .confirm-box h3 { font-family:'Syne',sans-serif; font-size:1.1rem; margin-bottom:0.7rem; }
+  .confirm-box p { color:var(--texte-dim); font-size:0.88rem; margin-bottom:1.5rem; line-height:1.5; }
+  .confirm-btns { display:flex; gap:0.8rem; justify-content:flex-end; }
+  .btn-cancel { padding:0.6rem 1.2rem; border-radius:8px; border:1px solid var(--border); background:none; color:var(--texte); cursor:pointer; font-family:'Instrument Sans',sans-serif; }
+  .btn-confirm { padding:0.6rem 1.2rem; border-radius:8px; border:none; background:var(--rouge); color:white; cursor:pointer; font-family:'Instrument Sans',sans-serif; font-weight:600; }
+  .live-dot { display:inline-block; width:8px; height:8px; background:var(--vert); border-radius:50%; margin-right:6px; animation:pulse 1.5s infinite; }
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--surface); border:1px solid var(--vert); color:var(--vert); padding:0.9rem 1.4rem; border-radius:12px; font-size:0.88rem; font-weight:500; box-shadow:0 8px 25px rgba(0,0,0,0.4); transform:translateY(100px); opacity:0; transition:all 0.3s; z-index:300; }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast.error { border-color:var(--rouge); color:var(--rouge); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes scaleIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @media(max-width:768px) { .sidebar{width:56px;padding:1rem 0.5rem} .sidebar-logo span,.sidebar-role,.nav-label,.nav-item span:not(:first-child),.nav-badge{display:none} .main-content{margin-left:56px;padding:1rem} }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-badge">🔐 Accès restreint</div>
+    <div class="login-logo">Fria<span>.</span>ville</div>
+    <div class="login-subtitle">Panneau d'administration</div>
+    <div class="fgl"><label>Nom d'utilisateur</label><input type="text" id="username" placeholder="admin" onkeydown="if(event.key==='Enter')login()"></div>
+    <div class="fgl"><label>Mot de passe</label><input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"></div>
+    <button class="login-btn" onclick="login()">Se connecter →</button>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects.</div>
+    <div class="login-hint">💡 <strong>Accès :</strong><br>Utilisateur : <strong>admin</strong><br>Mot de passe : <strong>fria2025</strong></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-screen" id="admin-screen">
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-logo">Fria<span>.</span>ville</div>
+      <div class="sidebar-role">Administration</div>
+      <div class="nav-label">Principal</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span>📊</span><span>Tableau de bord</span></div>
+      <div class="nav-item" onclick="showPage('events',this)"><span>📅</span><span>Événements</span><span class="nav-badge" id="pending-badge">0</span></div>
+      <div class="nav-item" onclick="showPage('users',this)"><span>👥</span><span>Soumissionnaires</span></div>
+    </div>
+    <div><button class="logout-btn" onclick="logout()"><span>🚪</span><span>Déconnexion</span></button></div>
+  </div>
+
+  <div class="main-content">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Tableau de bord</div>
+        <div class="page-sub"><span class="live-dot"></span>Données en temps réel — Fria.ville</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="s-approved">—</div><div class="stat-label">Validés</div><div class="stat-change up">Visibles sur le site</div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="s-pending">—</div><div class="stat-label">En attente</div><div class="stat-change warn" id="s-pending-txt">À traiter</div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="s-rejected">—</div><div class="stat-label">Refusés</div></div>
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value" id="s-total">—</div><div class="stat-label">Total soumis</div></div>
+      </div>
+      <div class="table-container">
+        <div class="table-header"><div class="table-title">⏳ En attente de validation</div></div>
+        <div id="dash-pending"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="page" id="page-events">
+      <div class="page-header">
+        <div class="page-title">Gestion des événements</div>
+        <div class="page-sub">Tous les événements soumis par les habitants de Fria</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="btn-sm b-approve" style="padding:0.5rem 1rem" onclick="setFilter('tous')">Tous</button>
+        <button class="btn-sm" style="padding:0.5rem 1rem;background:rgba(245,158,11,0.15);color:var(--or)" onclick="setFilter('pending')">⏳ En attente</button>
+        <button class="btn-sm b-approve" style="padding:0.5rem 1rem" onclick="setFilter('approved')">✅ Validés</button>
+        <button class="btn-sm b-reject" style="padding:0.5rem 1rem" onclick="setFilter('rejected')">❌ Refusés</button>
+      </div>
+      <div class="table-container">
+        <div class="table-header">
+          <div class="table-title">Liste complète</div>
+          <input class="search-input" placeholder="🔍 Rechercher..." oninput="searchQ=this.value;renderEventsTable()">
+        </div>
+        <div id="events-table"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div class="page-title">Soumissionnaires</div>
+        <div class="page-sub">Personnes ayant soumis des événements</div>
+      </div>
+      <div class="table-container">
+        <div class="table-header"><div class="table-title">Par organisateur</div></div>
+        <div id="users-table"><div class="loading-state"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="c-title">Confirmer</h3>
+    <p id="c-msg"></p>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-confirm" id="c-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ggvicqhpggckizgbgyuo.supabase.co',
+  'sb_publishable_lzVjO9TdylceZXb52q0gZQ_7raLfyaO'
+);
+
+let allEvents = [];
+let evFilter = 'tous';
+let searchQ = '';
+let confirmCb = null;
+let channel = null;
+
+// ===== LOGIN =====
+function login() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  if (u==='admin' && p==='fria2025') {
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    loadEvents();
+    subscribeRealtime();
+  } else {
+    document.getElementById('login-error').style.display='block';
+  }
+}
+function logout() {
+  if (channel) sb.removeChannel(channel);
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('username').value='';
+  document.getElementById('password').value='';
+}
+
+// ===== CHARGER =====
+async function loadEvents() {
+  const { data, error } = await sb.from('evenements').select('*').order('created_at',{ascending:false});
+  if (error) { showToast('❌ Erreur Supabase: '+error.message, true); return; }
+  allEvents = data || [];
+  updateAll();
+}
+
+// ===== REALTIME =====
+function subscribeRealtime() {
+  channel = sb.channel('evenements-changes')
+    .on('postgres_changes', { event:'*', schema:'public', table:'evenements' }, () => {
+      loadEvents();
+    }).subscribe();
+}
+
+// ===== MISE À JOUR GLOBALE =====
+function updateAll() {
+  updateStats();
+  renderDashPending();
+  renderEventsTable();
+  renderUsersTable();
+}
+
+function updateStats() {
+  const approved = allEvents.filter(e=>e.status==='approved').length;
+  const pending = allEvents.filter(e=>e.status==='pending').length;
+  const rejected = allEvents.filter(e=>e.status==='rejected').length;
+  document.getElementById('s-approved').textContent = approved;
+  document.getElementById('s-pending').textContent = pending;
+  document.getElementById('s-rejected').textContent = rejected;
+  document.getElementById('s-total').textContent = allEvents.length;
+  document.getElementById('s-pending-txt').textContent = pending > 0 ? '⚠ À traiter' : '✅ Tout traité';
+  const badge = document.getElementById('pending-badge');
+  badge.textContent = pending;
+  badge.style.display = pending > 0 ? 'inline' : 'none';
+}
+
+// ===== DASHBOARD PENDING =====
+function renderDashPending() {
+  const pending = allEvents.filter(e=>e.status==='pending');
+  const el = document.getElementById('dash-pending');
+  if (pending.length===0) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div>Aucun événement en attente !</div>`; return; }
+  el.innerHTML=`<table><thead><tr><th>Événement</th><th>Auteur</th><th>Date</th><th>Catégorie</th><th>Actions</th></tr></thead><tbody>
+    ${pending.map(e=>`<tr>
+      <td><strong>${e.nom}</strong></td>
+      <td>${e.auteur||'—'}</td>
+      <td>${e.date||'—'}</td>
+      <td>${e.cat||'—'}</td>
+      <td><div class="action-btns">
+        <button class="btn-sm b-approve" onclick="approveEvent('${e.id}','${e.nom.replace(/'/g,"\\'")}')">✅ Valider</button>
+        <button class="btn-sm b-reject" onclick="rejectEvent('${e.id}','${e.nom.replace(/'/g,"\\'")}')">❌ Refuser</button>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ===== TABLE ÉVÉNEMENTS =====
+function setFilter(f) { evFilter=f; renderEventsTable(); }
+function renderEventsTable() {
+  let list = allEvents;
+  if (evFilter!=='tous') list=list.filter(e=>e.status===evFilter);
+  if (searchQ) list=list.filter(e=>(e.nom||'').toLowerCase().includes(searchQ.toLowerCase()));
+  const el = document.getElementById('events-table');
+  if (list.length===0) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div>Aucun résultat</div>`; return; }
+  el.innerHTML=`<table><thead><tr><th>Événement</th><th>Auteur</th><th>Date</th><th>Lieu</th><th>Catégorie</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+    ${list.map(e=>`<tr>
+      <td><strong>${e.nom}</strong></td>
+      <td>${e.auteur||'—'}</td>
+      <td>${e.date||'—'} ${e.heure||''}</td>
+      <td>${e.lieu||'—'}</td>
+      <td>${e.cat||'—'}</td>
+      <td><span class="status-badge ${e.status==='approved'?'s-approved':e.status==='pending'?'s-pending':'s-rejected'}">
+        ${e.status==='approved'?'✅ Validé':e.status==='pending'?'⏳ En attente':'❌ Refusé'}
+      </span></td>
+      <td><div class="action-btns">
+        ${e.status!=='approved'?`<button class="btn-sm b-approve" onclick="approveEvent('${e.id}','${e.nom.replace(/'/g,"\\'")}')">Valider</button>`:''}
+        ${e.status!=='rejected'?`<button class="btn-sm b-reject" onclick="rejectEvent('${e.id}','${e.nom.replace(/'/g,"\\'")}')">Refuser</button>`:''}
+        <button class="btn-sm b-delete" onclick="confirmDelete('${e.id}','${e.nom.replace(/'/g,"\\'")}')">🗑️</button>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ===== TABLE USERS =====
+function renderUsersTable() {
+  const byAuteur = {};
+  allEvents.forEach(e=>{
+    const a=e.auteur||'Inconnu';
+    if(!byAuteur[a]) byAuteur[a]={nom:a,total:0,approved:0,pending:0,rejected:0};
+    byAuteur[a].total++;
+    if(e.status==='approved') byAuteur[a].approved++;
+    if(e.status==='pending') byAuteur[a].pending++;
+    if(e.status==='rejected') byAuteur[a].rejected++;
+  });
+  const users=Object.values(byAuteur);
+  const el=document.getElementById('users-table');
+  if(users.length===0){el.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div>Aucun soumissionnaire</div>`;return;}
+  el.innerHTML=`<table><thead><tr><th>Nom / Organisation</th><th>Total soumis</th><th>Validés</th><th>En attente</th><th>Refusés</th></tr></thead><tbody>
+    ${users.map(u=>`<tr>
+      <td><strong>${u.nom}</strong></td>
+      <td>${u.total}</td>
+      <td style="color:var(--vert)">${u.approved}</td>
+      <td style="color:var(--or)">${u.pending}</td>
+      <td style="color:var(--rouge)">${u.rejected}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ===== ACTIONS =====
+async function approveEvent(id, nom) {
+  const {error}=await sb.from('evenements').update({status:'approved'}).eq('id',id);
+  if(error){showToast('❌ Erreur: '+error.message,true);return;}
+  showToast('✅ "'+nom+'" validé ! Visible sur le site maintenant.');
+}
+async function rejectEvent(id, nom) {
+  const {error}=await sb.from('evenements').update({status:'rejected'}).eq('id',id);
+  if(error){showToast('❌ Erreur: '+error.message,true);return;}
+  showToast('Événement refusé.',true);
+}
+function confirmDelete(id, nom) {
+  document.getElementById('c-title').textContent='🗑️ Supprimer';
+  document.getElementById('c-msg').textContent=`Supprimer "${nom}" ? Action irréversible.`;
+  document.getElementById('c-ok').onclick=async()=>{
+    const {error}=await sb.from('evenements').delete().eq('id',id);
+    if(error){showToast('❌ Erreur: '+error.message,true);closeConfirm();return;}
+    closeConfirm(); showToast('🗑️ Événement supprimé.');
+  };
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
+document.getElementById('confirm-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('confirm-overlay'))closeConfirm();});
+
+// ===== NAVIGATION =====
+function showPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ===== TOAST =====
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' error':'');
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
