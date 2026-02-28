@@ -2,389 +2,943 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<ma name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fria — Ma Ville</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Guinée Rencontres 💚</title>
+<meta name="application-name" content="Guinée Rencontres">
+<meta name="description" content="La plateforme de rencontres N°1 en Guinée. Trouve ton âme sœur par ville.">
+<meta name="theme-color" content="#009a44">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guinée Rencontres">
+<link rel="manifest" id="pwa-manifest">
+<link rel="apple-touch-icon" id="apple-icon">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --vert:#1a6b3a; --vert-clair:#2d9b56; --or:#e8a020; --sable:#f5f0e8; --blanc:#ffffff; --noir:#111111; --gris:#6b6b6b; }
+  :root {
+    --vert: #009a44;
+    --jaune: #fcd116;
+    --rouge: #ce1126;
+    --dark: #0d1b14;
+    --card: #132018;
+    --card2: #1a2c20;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--sable); color:var(--noir); overflow-x:hidden; }
-  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1rem 2.5rem; background:rgba(26,107,58,0.95); backdrop-filter:blur(10px); box-shadow:0 2px 20px rgba(0,0,0,0.15); }
-  .logo { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; color:#fff; }
-  .logo span { color:var(--or); }
-  .nav-links { display:flex; gap:2rem; list-style:none; }
-  .nav-links a { color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.9rem; font-weight:500; cursor:pointer; transition:color 0.2s; }
-  .nav-links a:hover { color:var(--or); }
-  .hero { min-height:100vh; background:linear-gradient(135deg,var(--vert) 0%,#0d4a27 60%,#1a3a1a 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:6rem 2rem 4rem; position:relative; overflow:hidden; }
-  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%,rgba(232,160,32,0.12) 0%,transparent 60%); }
-  .hero-badge { background:rgba(232,160,32,0.2); border:1px solid rgba(232,160,32,0.5); color:var(--or); padding:0.4rem 1.2rem; border-radius:50px; font-size:0.8rem; font-weight:500; letter-spacing:2px; text-transform:uppercase; margin-bottom:1.5rem; position:relative; animation:fadeUp 0.6s ease forwards; }
-  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(3rem,8vw,6rem); font-weight:900; color:#fff; line-height:1.05; margin-bottom:1.2rem; position:relative; animation:fadeUp 0.7s ease 0.1s both; }
-  .hero h1 span { color:var(--or); }
-  .hero p { font-size:1.15rem; color:rgba(255,255,255,0.75); max-width:520px; line-height:1.7; margin-bottom:2.5rem; position:relative; animation:fadeUp 0.7s ease 0.2s both; }
-  .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; position:relative; animation:fadeUp 0.7s ease 0.3s both; }
-  .btn-primary { background:var(--or); color:var(--noir); border:none; padding:0.85rem 2rem; border-radius:8px; font-size:0.95rem; font-weight:600; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; font-family:'DM Sans',sans-serif; }
-  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(232,160,32,0.4); }
-  .btn-secondary { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.4); padding:0.85rem 2rem; border-radius:8px; font-size:0.95rem; font-weight:500; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
-  .btn-secondary:hover { border-color:var(--or); color:var(--or); }
-  .hero-stats { display:flex; gap:3rem; margin-top:4rem; padding-top:2.5rem; border-top:1px solid rgba(255,255,255,0.15); position:relative; animation:fadeUp 0.7s ease 0.4s both; }
+  body { font-family:'Nunito',sans-serif; background:var(--dark); color:#fff; min-height:100vh; overflow-x:hidden; }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background: radial-gradient(ellipse at 20% 20%,rgba(0,154,68,.15) 0%,transparent 50%),
+                radial-gradient(ellipse at 80% 80%,rgba(206,17,38,.1) 0%,transparent 50%),
+                radial-gradient(ellipse at 50% 50%,rgba(252,209,22,.05) 0%,transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:16px 40px; display:flex; align-items:center; justify-content:space-between; background:rgba(13,27,20,.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(0,154,68,.3); }
+  .logo { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; cursor:pointer; }
+  .logo .g{color:var(--vert)} .logo .r{color:var(--rouge)} .logo .y{color:var(--jaune)}
+  .nav-flag { display:flex; gap:4px; align-items:center; }
+  .flag-stripe { width:8px; height:28px; border-radius:2px; }
+  .nav-right { display:flex; gap:10px; align-items:center; }
+  .btn-nav { background:var(--vert); color:#fff; border:none; padding:8px 22px; border-radius:25px; font-family:'Nunito',sans-serif; font-weight:700; cursor:pointer; transition:all .3s; font-size:.9rem; }
+  .btn-nav:hover { background:#007a35; transform:translateY(-2px); }
+  .btn-chat-nav { background:rgba(252,209,22,.15); color:var(--jaune); border:1.5px solid var(--jaune); padding:8px 18px; border-radius:25px; font-family:'Nunito',sans-serif; font-weight:700; cursor:pointer; transition:all .3s; font-size:.9rem; position:relative; display:none; }
+  .btn-chat-nav.visible { display:block; }
+  .btn-chat-nav:hover { background:rgba(252,209,22,.25); }
+  .notif-badge { position:absolute; top:-6px; right:-6px; background:var(--rouge); color:#fff; border-radius:50%; width:18px; height:18px; font-size:.65rem; font-weight:900; display:flex; align-items:center; justify-content:center; }
+
+  /* HERO */
+  .hero { position:relative; z-index:1; padding:140px 40px 80px; text-align:center; }
+  .hero-badge { display:inline-block; background:rgba(252,209,22,.15); border:1px solid var(--jaune); color:var(--jaune); padding:6px 18px; border-radius:20px; font-size:.8rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; animation:fadeDown .8s ease both; }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.5rem,6vw,5rem); font-weight:900; line-height:1.1; margin-bottom:20px; animation:fadeDown .8s .1s ease both; }
+  .hero h1 em { font-style:normal; background:linear-gradient(135deg,var(--vert),var(--jaune)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero p { font-size:1.15rem; color:rgba(255,255,255,.7); max-width:520px; margin:0 auto 40px; animation:fadeDown .8s .2s ease both; }
+  .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; animation:fadeDown .8s .3s ease both; }
+  .btn-primary { background:linear-gradient(135deg,var(--vert),#00c257); color:#fff; border:none; padding:14px 36px; border-radius:30px; font-family:'Nunito',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; transition:all .3s; box-shadow:0 8px 25px rgba(0,154,68,.4); }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,154,68,.5); }
+  .btn-outline { background:transparent; color:#fff; border:2px solid rgba(255,255,255,.3); padding:14px 36px; border-radius:30px; font-family:'Nunito',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; transition:all .3s; }
+  .btn-outline:hover { border-color:var(--jaune); color:var(--jaune); }
+
+  /* STATS */
+  .stats { position:relative; z-index:1; display:flex; justify-content:center; gap:60px; flex-wrap:wrap; padding:40px; animation:fadeUp .8s .4s ease both; }
   .stat { text-align:center; }
-  .stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--or); }
-  .stat-label { font-size:0.8rem; color:rgba(255,255,255,0.6); margin-top:0.2rem; }
-  section { padding:5rem 2rem; }
-  .container { max-width:1100px; margin:0 auto; }
-  .section-title { font-family:'Playfair Display',serif; font-size:amp(2rem,4vw,2.8rem); font-weight:700; color:var(--noir); margin-bottom:0.5rem; }
-  .section-title span { color:var(--vert); }
-  .section-sub { color:var(--gris); font-size:1rem; margin-bottom:3rem; }
-  .filter-bar { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:2rem; }
-  .filter-btn { padding:0.5rem 1.2rem; border-radius:50px; border:1.5px solid #ddd; background:white; font-size:0.85rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; color:var(--noir); }
-  .filter-btn.active,.filter-btn:hover { background:var(--vert); color:white; border-color:var(--vert); }
-  .events-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; }
-  .event-card { background:white; border-radius:16px; overflow:hidden; box-shadow:0 2px 15px rgba(0,0,0,0.06); transition:transform 0.25s,box-shadow 0.25s; cursor:pointer; }
-  .event-card:hover { transform:translateY(-5px); box-shadow:0 12px 35px rgba(0,0,0,0.12); }
-  .event-img { height:160px; display:flex; align-items:center; justify-content:center; font-size:3rem; position:relative; }
-  .event-tag { position:absolute; top:12px; left:12px; padding:0.3rem 0.8rem; border-radius:50px; font-size:0.72rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
-  .event-body { padding:1.2rem; }
-  .event-date { display:flex; align-items:center; gap:0.4rem; color:var(--vert-clair); font-size:0.82rem; font-weight:600; margin-bottom:0.5rem; }
-  .event-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:0.4rem; line-height:1.3; }
-  .event-desc { color:var(--gris); font-size:0.85rem; line-height:1.5; margin-bottom:1rem; }
-  .event-footer { display:flex; align-items:center; justify-content:space-between; border-top:1px solid #f0f0f0; padding-top:0.8rem; }
-  .event-place { color:var(--gris); font-size:0.8rem; }
-  .event-btn { background:var(--vert); color:white; border:none; padding:0.4rem 1rem; border-radius:6px; font-size:0.8rem; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:background 0.2s; }
-  .event-btn:hover { background:var(--vert-clair); }
-  .loading { text-align:center; padding:3rem; color:var(--gris); }
-  .spinner { width:40px; height:40px; border:3px solid #ddd; border-top-color:var(--vert); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem; }
-  #agenda { background:white; }
-  .agenda-layout { display:grid; grid-template-columns:auto 1fr; gap:2.5rem; align-items:start; }
-  .calendar { background:var(--sable); border-radius:20px; padding:2rem; max-width:500px; }
-  .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
-  .cal-header h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; }
-  .cal-nav { background:white; border:none; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 6px rgba(0,0,0,0.1); font-size:1rem; transition:background 0.2s; }
-  .cal-nav:hover { background:var(--vert); color:white; }
-  .cal-days-header { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
-  .cal-day-name { text-align:center; font-size:0.72rem; font-weight:600; color:var(--gris); padding:0.3rem 0; text-transform:uppercase; letter-spacing:0.5px; }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-  .cal-day { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:10px; font-size:0.85rem; cursor:pointer; transition:all 0.15s; position:relative; background:white; }
-  .cal-day:hover { background:var(--vert); color:white; }
-  .cal-day.today { background:var(--vert); color:white; font-weight:700; }
-  .cal-day.has-event::after { content:''; position:absolute; bottom:4px; width:5px; height:5px; border-radius:50%; background:var(--or); }
-  .cal-day.today.has-event::after { background:white; }
-  .cal-day.empty { background:transparent; cursor:default; }
-  .agenda-side { padding-left:2rem; }
-  .upcoming-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:1.5rem; }
-  .upcoming-list { display:flex; flex-direction:column; gap:1rem; }
-  .upcoming-item { display:flex; gap:1rem; align-items:flex-start; padding:1rem; background:var(--sable); border-radius:12px; transition:transform 0.2s; cursor:pointer; }
-  .upcoming-item:hover { transform:translateX(5px); }
-  .upcoming-date-box { min-width:50px; text-align:center; background:var(--vert); color:white; border-radius:10px; padding:0.5rem; }
-  .upcoming-day { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; line-height:1; }
-  .upcoming-month { font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; opacity:0.85; }
-  .upcoming-info h4 { font-weight:600; font-size:0.95rem; margin-bottom:0.2rem; }
-  .upcoming-info p { font-size:0.8rem; color:var(--gris); }
-  .add-event-form { background:linear-gradient(135deg,var(--vert),#0d4a27); border-radius:20px; padding:2.5rem; color:white; max-width:600px; }
-  .add-event-form h3 { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:0.4rem; }
-  .add-event-form p { opacity:0.75; font-size:0.9rem; margin-bottom:1.5rem; }
-  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .form-group { display:flex; flex-direction:column; gap:0.4rem; margin-bottom:1rem; }
-  .form-group label { font-size:0.85rem; opacity:0.9; font-weight:500; }
-  .form-group input,.form-group select,.form-group textarea { padding:0.7rem 1rem; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:0.9rem; background:rgba(255,255,255,0.15); color:white; outline:none; transition:background 0.2s; }
-  .form-group input::placeholder,.form-group textarea::placeholder { color:rgba(255,255,255,0.5); }
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { background:rgba(255,255,255,0.25); }
-  .form-group select option { color:var(--noir); background:white; }
-  .form-group textarea { resize:vertical; min-height:80px; }
-  .submit-btn { width:100%; background:var(--or); color:var(--noir); border:none; padding:0.9rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif; transition:transform 0.2s,box-shadow 0.2s; margin-top:0.5rem; }
-  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(232,160,32,0.4); }
-  .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:none; align-items:center; justify-content:center; padding:1rem; }
-  .modal-overlay.open { display:flex; }
-  .modal { background:white; border-radius:20px; max-width:500px; width:100%; padding:2rem; position:relative; animation:scaleIn 0.25s ease; }
-  .modal-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--gris); }
-  .modal h2 { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:1rem; }
-  .modal-emoji { font-size:3rem; margin-bottom:1rem; display:block; }
-  .modal p { color:var(--gris); line-height:1.6; margin-bottom:0.5rem; font-size:0.9rem; }
-  .modal .detail { display:flex; gap:0.5rem; align-items:center; color:var(--noir); font-size:0.9rem; margin:0.4rem 0; }
-  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--vert); color:white; padding:1rem 1.5rem; border-radius:12px; font-size:0.9rem; font-weight:500; box-shadow:0 8px 25px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.3s; z-index:300; }
-  .toast.show { transform:translateY(0); opacity:1; }
-  .toast.error { background:#e74c3c; }
-  footer { background:var(--noir); color:rgba(255,255,255,0.7); text-align:center; padding:2rem; font-size:0.85rem; }
-  footer span { color:var(--or); }
+  .stat-num { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--jaune); }
+  .stat-label { font-size:.85rem; color:rgba(255,255,255,.6); }
+
+  /* SECTIONS */
+  .section-title { text-align:center; font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; margin-bottom:8px; }
+  .section-sub { text-align:center; color:rgba(255,255,255,.6); margin-bottom:40px; font-size:.95rem; }
+  .villes-section,.profiles-section { position:relative; z-index:1; padding:60px 40px; }
+  .villes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; max-width:900px; margin:0 auto; }
+  .ville-card { background:var(--card); border:1px solid rgba(0,154,68,.2); border-radius:16px; padding:20px 16px; text-align:center; cursor:pointer; transition:all .3s; position:relative; overflow:hidden; }
+  .ville-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--vert),var(--jaune)); transform:scaleX(0); transition:transform .3s; }
+  .ville-card:hover { transform:translateY(-4px); border-color:var(--vert); }
+  .ville-card:hover::before { transform:scaleX(1); }
+  .ville-icon { font-size:2rem; margin-bottom:8px; }
+  .ville-name { font-weight:700; font-size:.95rem; }
+  .ville-count { font-size:.75rem; color:var(--vert); margin-top:4px; }
+
+  /* PROFILES */
+  .profiles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; max-width:1000px; margin:0 auto; }
+  .profile-card { background:var(--card); border:1px solid rgba(0,154,68,.15); border-radius:20px; overflow:hidden; transition:all .3s; cursor:pointer; }
+  .profile-card:hover { transform:translateY(-5px); border-color:rgba(0,154,68,.4); box-shadow:0 12px 40px rgba(0,0,0,.3); }
+  .profile-card-img { height:160px; display:flex; align-items:center; justify-content:center; font-size:4rem; position:relative; }
+  .online-dot { position:absolute; bottom:12px; right:12px; width:12px; height:12px; background:#00ff80; border-radius:50%; border:2px solid var(--card); box-shadow:0 0 8px #00ff80; animation:blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .profile-card-info { padding:16px; }
+  .profile-card-name { font-weight:700; font-size:1rem; margin-bottom:4px; }
+  .profile-card-details { font-size:.8rem; color:rgba(255,255,255,.5); margin-bottom:10px; }
+  .profile-card-footer { display:flex; align-items:center; justify-content:space-between; }
+  .profile-card-ville { display:inline-flex; align-items:center; gap:4px; background:rgba(0,154,68,.15); color:var(--vert); padding:3px 10px; border-radius:10px; font-size:.75rem; font-weight:700; }
+  .btn-msg { background:linear-gradient(135deg,var(--vert),#00c257); color:#fff; border:none; padding:6px 14px; border-radius:20px; font-size:.78rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'Nunito',sans-serif; }
+  .btn-msg:hover { transform:scale(1.05); box-shadow:0 4px 12px rgba(0,154,68,.4); }
+
+  /* CHAT PANEL */
+  .chat-panel { position:fixed; bottom:0; right:24px; width:360px; height:520px; background:var(--card); border:1px solid rgba(0,154,68,.35); border-bottom:none; border-radius:20px 20px 0 0; z-index:300; display:flex; flex-direction:column; transform:translateY(100%); transition:transform .4s cubic-bezier(.34,1.56,.64,1); box-shadow:0 -8px 40px rgba(0,0,0,.4); }
+  .chat-panel.open { transform:translateY(0); }
+
+  .chat-header { display:flex; align-items:center; gap:12px; padding:14px 18px; background:linear-gradient(135deg,rgba(0,154,68,.25),rgba(0,154,68,.1)); border-bottom:1px solid rgba(0,154,68,.2); border-radius:20px 20px 0 0; }
+  .chat-header-avatar { font-size:1.8rem; }
+  .chat-header-info { flex:1; }
+  .chat-header-name { font-weight:700; font-size:1rem; }
+  .chat-header-status { font-size:.75rem; color:#00ff80; }
+  .chat-close-btn { background:none; border:none; color:rgba(255,255,255,.4); font-size:1.1rem; cursor:pointer; padding:4px; transition:color .2s; }
+  .chat-close-btn:hover { color:var(--rouge); }
+
+  .chat-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,.07); flex-shrink:0; }
+  .chat-tab { flex:1; padding:10px; text-align:center; font-size:.8rem; font-weight:700; color:rgba(255,255,255,.4); cursor:pointer; transition:all .2s; border-bottom:2px solid transparent; }
+  .chat-tab.active { color:var(--vert); border-bottom-color:var(--vert); }
+
+  .conv-list { flex:1; overflow-y:auto; }
+  .conv-item { display:flex; align-items:center; gap:12px; padding:12px 16px; cursor:pointer; transition:background .2s; border-bottom:1px solid rgba(255,255,255,.04); }
+  .conv-item:hover { background:rgba(0,154,68,.08); }
+  .conv-item.active { background:rgba(0,154,68,.12); }
+  .conv-avatar { font-size:1.8rem; flex-shrink:0; position:relative; }
+  .conv-avatar .dot { position:absolute; bottom:0; right:0; width:10px; height:10px; background:#00ff80; border-radius:50%; border:2px solid var(--card); }
+  .conv-info { flex:1; min-width:0; }
+  .conv-name { font-weight:700; font-size:.9rem; }
+  .conv-preview { font-size:.75rem; color:rgba(255,255,255,.45); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .conv-meta { font-size:.7rem; color:rgba(255,255,255,.3); text-align:right; flex-shrink:0; }
+  .conv-unread { background:var(--vert); color:#fff; border-radius:10px; padding:1px 7px; font-size:.7rem; font-weight:700; margin-top:4px; display:inline-block; }
+
+  .chat-messages-view { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .chat-back { display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,.07); cursor:pointer; font-size:.85rem; color:var(--vert); font-weight:700; transition:opacity .2s; flex-shrink:0; }
+  .chat-back:hover { opacity:.7; }
+
+  .messages-area { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .msg { display:flex; flex-direction:column; max-width:78%; animation:msgIn .25s ease both; }
+  .msg.sent { align-self:flex-end; align-items:flex-end; }
+  .msg.recv { align-self:flex-start; align-items:flex-start; }
+  .msg-bubble { padding:10px 14px; border-radius:18px; font-size:.88rem; line-height:1.45; word-break:break-word; }
+  .msg.sent .msg-bubble { background:linear-gradient(135deg,var(--vert),#00c257); color:#fff; border-bottom-right-radius:4px; }
+  .msg.recv .msg-bubble { background:rgba(255,255,255,.09); color:#fff; border-bottom-left-radius:4px; }
+  .msg-time { font-size:.65rem; color:rgba(255,255,255,.35); margin-top:4px; padding:0 4px; }
+
+  .msg-typing { align-self:flex-start; background:rgba(255,255,255,.08); border-radius:18px; border-bottom-left-radius:4px; padding:10px 16px; display:none; gap:4px; align-items:center; }
+  .msg-typing.show { display:flex; }
+  .dot-typing { width:7px; height:7px; background:rgba(255,255,255,.5); border-radius:50%; animation:typingBounce 1.2s infinite; }
+  .dot-typing:nth-child(2){animation-delay:.2s} .dot-typing:nth-child(3){animation-delay:.4s}
+  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  .day-sep { text-align:center; font-size:.7rem; color:rgba(255,255,255,.3); padding:4px 0; }
+
+  .emoji-bar { display:flex; gap:6px; padding:6px 14px 0; flex-shrink:0; }
+  .emoji-btn { background:none; border:none; font-size:1.2rem; cursor:pointer; padding:2px 4px; border-radius:8px; transition:background .2s; }
+  .emoji-btn:hover { background:rgba(255,255,255,.1); }
+
+  .chat-input-area { padding:12px 14px; border-top:1px solid rgba(255,255,255,.07); display:flex; gap:8px; align-items:center; flex-shrink:0; }
+  .chat-input { flex:1; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:#fff; padding:10px 14px; border-radius:24px; font-family:'Nunito',sans-serif; font-size:.88rem; outline:none; transition:border-color .2s; }
+  .chat-input::placeholder { color:rgba(255,255,255,.3); }
+  .chat-input:focus { border-color:var(--vert); }
+  .btn-send { background:linear-gradient(135deg,var(--vert),#00c257); color:#fff; border:none; width:38px; height:38px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; transition:all .2s; flex-shrink:0; }
+  .btn-send:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(0,154,68,.4); }
+
+  /* FLOATING BUTTON */
+  .chat-bubble-float { position:fixed; bottom:30px; right:30px; z-index:299; width:56px; height:56px; background:linear-gradient(135deg,var(--vert),#00c257); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:1.4rem; cursor:pointer; box-shadow:0 6px 24px rgba(0,154,68,.5); transition:all .3s; }
+  .chat-bubble-float:hover { transform:scale(1.1); }
+  .chat-bubble-float.show { display:flex; animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+  .float-badge { position:absolute; top:-4px; right:-4px; background:var(--rouge); color:#fff; border-radius:50%; width:20px; height:20px; font-size:.7rem; font-weight:900; display:flex; align-items:center; justify-content:center; }
+
+  /* MODAL */
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200; backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:20px; }
+  .overlay.active { display:flex; }
+  .modal { background:var(--card); border:1px solid rgba(0,154,68,.3); border-radius:24px; padding:40px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; position:relative; animation:modalIn .4s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes modalIn { from{opacity:0;transform:scale(.8) translateY(30px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .modal-close { position:absolute; top:16px; right:20px; background:none; border:none; color:rgba(255,255,255,.5); font-size:1.5rem; cursor:pointer; }
+  .modal-close:hover { color:#fff; }
+  .modal-title { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; margin-bottom:6px; }
+  .modal-subtitle { font-size:.9rem; color:rgba(255,255,255,.5); margin-bottom:28px; }
+  .progress-bar { display:flex; gap:8px; margin-bottom:28px; }
+  .progress-step { flex:1; height:4px; background:rgba(255,255,255,.1); border-radius:2px; transition:background .3s; }
+  .progress-step.active { background:var(--vert); }
+  .progress-step.done { background:var(--jaune); }
+  .form-step { display:none; }
+  .form-step.active { display:block; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-group { margin-bottom:18px; }
+  .form-group label { display:block; font-size:.85rem; font-weight:700; color:rgba(255,255,255,.7); margin-bottom:7px; text-transform:uppercase; letter-spacing:.5px; }
+  .form-group input,.form-group select { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); color:#fff; padding:12px 16px; border-radius:12px; font-family:'Nunito',sans-serif; font-size:.95rem; outline:none; transition:all .3s; -webkit-appearance:none; }
+  .form-group input::placeholder { color:rgba(255,255,255,.3); }
+  .form-group input:focus,.form-group select:focus { border-color:var(--vert); background:rgba(0,154,68,.08); }
+  .form-group select option { background:#132018; color:#fff; }
+  .age-chips { display:flex; flex-wrap:wrap; gap:10px; }
+  .age-chip { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.15); color:rgba(255,255,255,.7); padding:8px 16px; border-radius:20px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; user-select:none; }
+  .age-chip.selected { background:var(--vert); border-color:var(--vert); color:#fff; }
+  .gender-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .gender-card { background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.1); border-radius:14px; padding:20px; text-align:center; cursor:pointer; transition:all .3s; }
+  .gender-card.selected { border-color:var(--vert); background:rgba(0,154,68,.12); }
+  .gender-card .g-icon { font-size:2.5rem; margin-bottom:8px; }
+  .gender-card .g-label { font-weight:700; font-size:.9rem; }
+  .form-nav { display:flex; gap:12px; margin-top:10px; }
+  .btn-back { flex:1; background:rgba(255,255,255,.08); color:rgba(255,255,255,.7); border:none; padding:13px; border-radius:12px; font-family:'Nunito',sans-serif; font-weight:700; cursor:pointer; }
+  .btn-next { flex:2; background:linear-gradient(135deg,var(--vert),#00c257); color:#fff; border:none; padding:13px; border-radius:12px; font-family:'Nunito',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; box-shadow:0 4px 15px rgba(0,154,68,.3); }
+  .btn-next:hover { transform:translateY(-2px); }
+  .success-screen { display:none; text-align:center; padding:20px 0; }
+  .success-screen.active { display:block; }
+  .success-icon { width:90px; height:90px; background:linear-gradient(135deg,var(--vert),#00c257); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 24px; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 30px rgba(0,154,68,.4)} 50%{box-shadow:0 0 60px rgba(0,154,68,.6)} }
+  .success-name { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; margin-bottom:8px; }
+  .success-msg { color:rgba(255,255,255,.6); font-size:.95rem; line-height:1.6; margin-bottom:24px; }
+  .profile-summary { background:rgba(0,154,68,.1); border:1px solid rgba(0,154,68,.3); border-radius:16px; padding:20px; text-align:left; margin-bottom:24px; }
+  .profile-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.07); font-size:.9rem; }
+  .profile-row:last-child { border-bottom:none; }
+  .profile-key { color:rgba(255,255,255,.5); }
+  .profile-val { font-weight:700; color:var(--jaune); }
+
+  footer { position:relative; z-index:1; text-align:center; padding:40px; border-top:1px solid rgba(255,255,255,.07); color:rgba(255,255,255,.4); font-size:.85rem; }
+  .footer-logo { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900; margin-bottom:10px; }
+
+  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--card2); border:1px solid var(--vert); border-radius:14px; padding:12px 24px; font-size:.9rem; font-weight:600; z-index:400; transition:transform .4s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-thumb { background:rgba(0,154,68,.4); border-radius:3px; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes scaleIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  @media(max-width:768px) { .agenda-layout{grid-template-columns:1fr} .agenda-side{padding-left:0} .form-row{grid-template-columns:1fr} .hero-stats{gap:1.5rem} nav{padding:1rem 1.2rem} .nav-links{gap:1rem} }
+  @keyframes msgIn { from{opacity:0;transform:scale(.85) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+  @media(max-width:600px) {
+    nav{padding:14px 20px;} .hero{padding:120px 20px 60px;} .stats{gap:30px;padding:30px 20px;}
+    .villes-section,.profiles-section{padding:40px 20px;} .form-row{grid-template-columns:1fr;}
+    .modal{padding:28px 20px;} .chat-panel{right:0;width:100%;border-radius:20px 20px 0 0;}
+    .chat-bubble-float{bottom:20px;right:20px;}
+  }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">Fria<span>.</span>ville</div>
-  <ul class="nav-links">
-    <li><a onclick="goTo('#evenements')">Événements</a></li>
-    <li><a onclick="goTo('#agenda')">Agenda</a></li>
-    <li><a onclick="goTo('#ajouter')">Publier</a></li>
-  </ul>
+  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <span class="g">Guinée</span> <span class="r">R</span><span class="y">e</span><span>ncontres</span>
+  </div>
+  <div class="nav-flag">
+    <div class="flag-stripe" style="background:#ce1126"></div>
+    <div class="flag-stripe" style="background:#fcd116"></div>
+    <div class="flag-stripe" style="background:#009a44"></div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-chat-nav" id="btn-chat-nav" onclick="toggleChat()">
+      💬 Messages
+      <span class="notif-badge" id="nav-notif" style="display:none">3</span>
+    </button>
+    <button class="btn-nav" onclick="openModal()">S'inscrire</button>
+  </div>
 </nav>
 
+<!-- BANNIÈRE INSTALLATION PWA -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:linear-gradient(135deg,#132018,#1a2c20);border-top:2px solid #009a44;padding:16px 20px;display:none;align-items:center;gap:14px;box-shadow:0 -8px 30px rgba(0,0,0,.5);">
+  <div style="width:48px;height:48px;background:linear-gradient(135deg,#009a44,#00c257);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">💚</div>
+  <div style="flex:1;">
+    <div style="font-weight:700;font-size:.95rem;">Installer l'app Guinée Rencontres</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.6);">Accède rapidement depuis ton téléphone 📱</div>
+  </div>
+  <button onclick="installPWA()" style="background:linear-gradient(135deg,#009a44,#00c257);color:#fff;border:none;padding:10px 18px;border-radius:20px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap;">Installer</button>
+  <button onclick="document.getElementById('pwa-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.2rem;cursor:pointer;padding:4px;">✕</button>
+</div>
+
 <section class="hero">
-  <div class="hero-badge">🇬🇳 Fria, Guinée</div>
-  <h1>Bienvenue à<br><span>Fria</span></h1>
-  <p>Découvrez tous les événements, activités et moments forts de votre ville.</p>
+  <div class="hero-badge">🇬🇳 Plateforme Guinéenne N°1</div>
+  <h1>Trouve ton <em>âme sœur</em><br>en Guinée</h1>
+  <p>Rejoins des milliers de Guinéens qui ont déjà trouvé l'amour. Par ville, par région, par affinité.</p>
   <div class="hero-btns">
-    <button class="btn-primary" onclick="goTo('#evenements')">Voir les événements →</button>
-    <button class="btn-secondary" onclick="goTo('#ajouter')">Publier un événement</button>
-  </div>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-num" id="total-events">—</div><div class="stat-label">Événements</div></div>
-    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Catégories</div></div>
-    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Ville, Fria</div></div>
+    <button class="btn-primary" onclick="openModal()">💚 Créer mon profil</button>
+    <button class="btn-outline" onclick="document.getElementById('profiles').scrollIntoView({behavior:'smooth'})">Voir les profils</button>
   </div>
 </section>
 
-<section id="evenements">
-  <div class="container">
-    <div class="section-title">Événements <span>à venir</span></div>
-    <div class="section-sub">Ce qui se passe à Fria en ce moment</div>
-    <div class="filter-bar" id="filters">
-      <button class="filter-btn active" data-cat="tous">Tous</button>
-      <button class="filter-btn" data-cat="culture">🎭 Culture</button>
-      <button class="filter-btn" data-cat="sport">⚽ Sport</button>
-      <button class="filter-btn" data-cat="marche">🛍️ Marché</button>
-      <button class="filter-btn" data-cat="fete">🎉 Fête</button>
+<div class="stats">
+  <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Membres inscrits</div></div>
+  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Villes couvertes</div></div>
+  <div class="stat"><div class="stat-num">3.2K</div><div class="stat-label">Couples formés</div></div>
+  <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Profils vérifiés</div></div>
+</div>
+
+<section class="villes-section">
+  <h2 class="section-title">Rencontres par Ville</h2>
+  <p class="section-sub">Trouve quelqu'un près de chez toi</p>
+  <div class="villes-grid">
+    <div class="ville-card" onclick="filterVille('Conakry')"><div class="ville-icon">🏙️</div><div class="ville-name">Conakry</div><div class="ville-count">4 820 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Kindia')"><div class="ville-icon">🌿</div><div class="ville-name">Kindia</div><div class="ville-count">1 240 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Labé')"><div class="ville-icon">⛰️</div><div class="ville-name">Labé</div><div class="ville-count">980 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Kankan')"><div class="ville-icon">🌅</div><div class="ville-name">Kankan</div><div class="ville-count">1 100 membres</div></div>
+    <div class="ville-card" onclick="filterVille('N\'Zérékoré')"><div class="ville-icon">🌳</div><div class="ville-name">N'Zérékoré</div><div class="ville-count">870 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Faranah')"><div class="ville-icon">🌄</div><div class="ville-name">Faranah</div><div class="ville-count">560 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Mamou')"><div class="ville-icon">🏡</div><div class="ville-name">Mamou</div><div class="ville-count">490 membres</div></div>
+    <div class="ville-card" onclick="filterVille('Boké')"><div class="ville-icon">🏖️</div><div class="ville-name">Boké</div><div class="ville-count">410 membres</div></div>
+  </div>
+</section>
+
+<section class="profiles-section" id="profiles">
+  <h2 class="section-title">Profils Récents</h2>
+  <p class="section-sub" id="profiles-subtitle">Membres actifs sur Guinée Rencontres</p>
+  <div class="profiles-grid" id="profiles-grid"></div>
+</section>
+
+<footer>
+  <div class="footer-logo"><span style="color:var(--vert)">Guinée</span> <span style="color:var(--rouge)">R</span><span style="color:var(--jaune)">e</span>ncontres</div>
+  <p>🇬🇳 Fait avec amour pour la Guinée • Conakry, République de Guinée</p>
+  <p style="margin-top:8px">© 2024 Guinée Rencontres — Tous droits réservés</p>
+</footer>
+
+<!-- CHAT PANEL -->
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-header">
+    <div class="chat-header-avatar" id="chat-header-avatar">💬</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name" id="chat-header-name">Messages</div>
+      <div class="chat-header-status" id="chat-header-status" style="font-size:.75rem;color:#00ff80">● En ligne</div>
     </div>
-    <div id="events-grid"><div class="loading"><div class="spinner"></div>Chargement...</div></div>
+    <button class="chat-close-btn" onclick="closeChat()">✕</button>
   </div>
-</section>
-
-<section id="agenda">
-  <div class="container">
-    <div class="section-title">Agenda <span>du mois</span></div>
-    <div class="section-sub">Planifiez vos sorties à Fria</div>
-    <div class="agenda-layout">
-      <div class="calendar">
-        <div class="cal-header">
-          <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
-          <h3 id="cal-title"></h3>
-          <button class="cal-nav" onclick="changeMonth(1)">›</button>
-        </div>
-        <div class="cal-days-header">
-          <div class="cal-day-name">Lun</div><div class="cal-day-name">Mar</div><div class="cal-day-name">Mer</div>
-          <div class="cal-day-name">Jeu</div><div class="cal-day-name">Ven</div><div class="cal-day-name">Sam</div><div class="cal-day-name">Dim</div>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-      <div class="agenda-side">
-        <div class="upcoming-title">Prochains événements</div>
-        <div class="upcoming-list" id="upcoming-list"><div class="loading"><div class="spinner"></div></div></div>
+  <div class="chat-tabs" id="chat-tabs">
+    <div class="chat-tab active" onclick="switchTab('convs')">💬 Conversations</div>
+    <div class="chat-tab" onclick="switchTab('online')">🟢 En ligne (8)</div>
+  </div>
+  <div class="conv-list" id="conv-list"></div>
+  <div class="conv-list" id="online-list" style="display:none"></div>
+  <div class="chat-messages-view" id="chat-messages-view" style="display:none">
+    <div class="chat-back" onclick="backToList()">← <span id="back-name" style="margin-left:6px;font-weight:700"></span></div>
+    <div class="messages-area" id="messages-area">
+      <div class="msg-typing" id="typing-indicator">
+        <div class="dot-typing"></div><div class="dot-typing"></div><div class="dot-typing"></div>
       </div>
     </div>
-  </div>
-</section>
-
-<section id="ajouter" style="background:var(--sable)">
-  <div class="container">
-    <div class="section-title">Publier un <span>événement</span></div>
-    <div class="section-sub">Partagez vos événements avec toute la communauté de Fria</div>
-    <div class="add-event-form">
-      <h3>✨ Nouvel événement</h3>
-      <p>Remplissez le formulaire. Votre événement sera visible après validation par l'admin.</p>
-      <div class="form-row">
-        <div class="form-group"><label>Nom de l'événement</label><input type="text" id="f-nom" placeholder="Ex: Match de football..."></div>
-        <div class="form-group"><label>Votre nom / organisation</label><input type="text" id="f-auteur" placeholder="Ex: Association Jeunesse..."></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Catégorie</label>
-          <select id="f-cat">
-            <option value="culture">🎭 Culture</option>
-            <option value="sport">⚽ Sport</option>
-            <option value="marche">🛍️ Marché</option>
-            <option value="fete">🎉 Fête</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Heure</label><input type="time" id="f-heure"></div>
-        <div class="form-group"><label>Lieu à Fria</label><input type="text" id="f-lieu" placeholder="Ex: Stade municipal..."></div>
-      </div>
-      <div class="form-group"><label>Description</label><textarea id="f-desc" placeholder="Décrivez votre événement..."></textarea></div>
-      <button class="submit-btn" id="submit-btn" onclick="addEvent()">🚀 Soumettre l'événement</button>
+    <div class="emoji-bar">
+      <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+      <button class="emoji-btn" onclick="insertEmoji('❤️')">❤️</button>
+      <button class="emoji-btn" onclick="insertEmoji('😄')">😄</button>
+      <button class="emoji-btn" onclick="insertEmoji('🙏')">🙏</button>
+      <button class="emoji-btn" onclick="insertEmoji('🇬🇳')">🇬🇳</button>
+      <button class="emoji-btn" onclick="insertEmoji('💚')">💚</button>
     </div>
-  </div>
-</section>
-
-<footer><p>© 2025 <span>Fria.ville</span> — Fait avec ❤️ pour la communauté de Fria, Guinée</p></footer>
-
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <span class="modal-emoji" id="m-emoji"></span>
-    <h2 id="m-title"></h2>
-    <div class="detail">📅 <span id="m-date"></span></div>
-    <div class="detail">🕐 <span id="m-heure"></span></div>
-    <div class="detail">📍 <span id="m-lieu"></span></div>
-    <p style="margin-top:1rem" id="m-desc"></p>
+    <div class="chat-input-area">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Écris un message..." onkeydown="handleKey(event)">
+      <button class="btn-send" onclick="sendMessage()">➤</button>
+    </div>
   </div>
 </div>
+
+<!-- FLOATING BUTTON -->
+<div class="chat-bubble-float" id="chat-bubble-float" onclick="toggleChat()">
+  💬
+  <div class="float-badge" id="float-badge" style="display:none">3</div>
+</div>
+
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ===== SUPABASE =====
-const { createClient } = supabase;
-const sb = createClient(
-  'https://ggvicqhpggckizgbgyuo.supabase.co',
-  'sb_publishable_lzVjO9TdylceZXb52q0gZQ_7raLfyaO'
-);
-
-let allEvents = [];
-let currentFilter = "tous";
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-
-// ===== HELPERS =====
-function catColor(c) { return {culture:'#8b5cf6',sport:'#2d9b56',marche:'#e8a020',fete:'#e11d48'}[c]||'#888'; }
-function catLabel(c) { return {culture:'🎭 Culture',sport:'⚽ Sport',marche:'🛍️ Marché',fete:'🎉 Fête'}[c]||c; }
-function catEmoji(c) { return {culture:'🎭',sport:'⚽',marche:'🛒',fete:'🎉'}[c]||'📅'; }
-function formatDate(d) {
-  if (!d) return '';
-  return new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-}
-function showToast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast'+(err?' error':'');
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
-}
-function goTo(id) { document.querySelector(id).scrollIntoView({behavior:'smooth'}); }
-
-// ===== CHARGER LES ÉVÉNEMENTS =====
-async function loadEvents() {
-  const { data, error } = await sb
-    .from('evenements')
-    .select('*')
-    .eq('status','approved')
-    .order('created_at',{ascending:false});
-
-  if (error) {
-    document.getElementById('events-grid').innerHTML = `<p style="color:#e74c3c;text-align:center;padding:2rem">⚠️ Erreur de connexion Supabase.<br><small>${error.message}</small></p>`;
-    return;
-  }
-  allEvents = data || [];
-  document.getElementById('total-events').textContent = allEvents.length;
-  renderEvents();
-  renderUpcoming();
-  renderCalendar();
-}
-
-// ===== AFFICHER ÉVÉNEMENTS =====
-function renderEvents() {
-  const list = currentFilter==='tous' ? allEvents : allEvents.filter(e=>e.cat===currentFilter);
-  const grid = document.getElementById('events-grid');
-  if (list.length===0) { grid.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--gris)">😕 Aucun événement dans cette catégorie.</div>`; return; }
-  grid.innerHTML = list.map(e=>`
-    <div class="event-card" onclick="openModal('${e.id}')">
-      <div class="event-img" style="background:linear-gradient(135deg,${catColor(e.cat)}22,${catColor(e.cat)}44)">
-        <span style="font-size:3.5rem">${catEmoji(e.cat)}</span>
-        <span class="event-tag" style="background:${catColor(e.cat)}22;color:${catColor(e.cat)}">${catLabel(e.cat)}</span>
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress-step active" id="step-bar-1"></div>
+      <div class="progress-step" id="step-bar-2"></div>
+      <div class="progress-step" id="step-bar-3"></div>
+    </div>
+    <div class="form-step active" id="step1">
+      <div class="modal-title">👤 Informations personnelles</div>
+      <div class="modal-subtitle">Étape 1 sur 3 — Parle-nous de toi</div>
+      <div class="form-row">
+        <div class="form-group"><label>Prénom *</label><input type="text" id="prenom" placeholder="Ton prénom"></div>
+        <div class="form-group"><label>Nom *</label><input type="text" id="nom" placeholder="Ton nom"></div>
       </div>
-      <div class="event-body">
-        <div class="event-date">📅 ${formatDate(e.date)}</div>
-        <div class="event-title">${e.nom}</div>
-        <div class="event-desc">${(e.description||'').substring(0,80)}...</div>
-        <div class="event-footer">
-          <div class="event-place">📍 ${e.lieu}</div>
-          <button class="event-btn">Voir plus</button>
+      <div class="form-row">
+        <div class="form-group"><label>Âge *</label><input type="number" id="age" placeholder="Ton âge" min="18" max="80"></div>
+        <div class="form-group"><label>Genre *</label>
+          <select id="genre"><option value="">Choisir...</option><option value="homme">Homme</option><option value="femme">Femme</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Ta ville *</label>
+        <select id="ville-habite">
+          <option value="">Choisir ta ville...</option>
+          <option>Conakry</option><option>Kindia</option><option>Labé</option><option>Kankan</option>
+          <option>N'Zérékoré</option><option>Faranah</option><option>Mamou</option><option>Boké</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="form-nav"><button class="btn-next" onclick="goStep(2)">Continuer →</button></div>
+    </div>
+    <div class="form-step" id="step2">
+      <div class="modal-title">💚 Ta recherche</div>
+      <div class="modal-subtitle">Étape 2 sur 3 — Qui cherches-tu ?</div>
+      <div class="form-group"><label>Ville visée *</label>
+        <select id="ville-vise">
+          <option value="">Choisir...</option>
+          <option>Conakry</option><option>Kindia</option><option>Labé</option><option>Kankan</option>
+          <option>N'Zérékoré</option><option>Faranah</option><option>Mamou</option><option>Boké</option><option>Toute la Guinée</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Tranche d'âge recherchée *</label>
+        <div class="age-chips">
+          <div class="age-chip" onclick="selAge(this,'18-25 ans')">18–25 ans</div>
+          <div class="age-chip" onclick="selAge(this,'26-30 ans')">26–30 ans</div>
+          <div class="age-chip" onclick="selAge(this,'31-35 ans')">31–35 ans</div>
+          <div class="age-chip" onclick="selAge(this,'36-40 ans')">36–40 ans</div>
+          <div class="age-chip" onclick="selAge(this,'41-50 ans')">41–50 ans</div>
+          <div class="age-chip" onclick="selAge(this,'50+ ans')">50+ ans</div>
+          <div class="age-chip" onclick="selAge(this,'Peu importe')">Peu importe</div>
+        </div>
+      </div>
+      <div class="form-group"><label>Je cherche *</label>
+        <div class="gender-cards">
+          <div class="gender-card" onclick="selGender(this,'homme')"><div class="g-icon">👨</div><div class="g-label">Un homme</div></div>
+          <div class="gender-card" onclick="selGender(this,'femme')"><div class="g-icon">👩</div><div class="g-label">Une femme</div></div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-back" onclick="goStep(1)">← Retour</button>
+        <button class="btn-next" onclick="goStep(3)">Continuer →</button>
+      </div>
+    </div>
+    <div class="form-step" id="step3">
+      <div class="modal-title">📱 Finaliser l'inscription</div>
+      <div class="modal-subtitle">Étape 3 sur 3 — Crée ton compte</div>
+      <div class="form-group"><label>Téléphone</label><input type="tel" id="tel" placeholder="+224 6XX XXX XXX"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="ton@email.com"></div>
+      <div class="form-group"><label>Mot de passe *</label><input type="password" id="password" placeholder="Minimum 6 caractères"></div>
+      <div class="form-group"><label>Présente-toi</label><input type="text" id="bio" placeholder="Ex: Sérieux, aimant la famille..."></div>
+      <div class="form-nav">
+        <button class="btn-back" onclick="goStep(2)">← Retour</button>
+        <button class="btn-next" onclick="submitForm()">🇬🇳 Créer mon profil</button>
+      </div>
+    </div>
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-name" id="success-name">Bienvenue !</div>
+      <div class="success-msg">Profil créé ! Tu peux maintenant envoyer des messages. 💚</div>
+      <div class="profile-summary" id="profile-summary"></div>
+      <button class="btn-next" onclick="afterRegister()" style="width:100%">Commencer à discuter 💬</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROFILES = [
+  {id:1,nom:'Chael',age:24,ville:'Conakry',genre:'femme',emoji:'👩🏾',cherche:'homme',tranche:'25-30 ans'},
+  {id:2,nom:'Mamadou',age:28,ville:'Kindia',genre:'homme',emoji:'👨🏾',cherche:'femme',tranche:'22-27 ans'},
+  {id:3,nom:'Mariama',age:26,ville:'Labé',genre:'femme',emoji:'👩🏿',cherche:'homme',tranche:'28-35 ans'},
+  {id:4,nom:'Ibrahim',age:31,ville:'Conakry',genre:'homme',emoji:'👨🏿',cherche:'femme',tranche:'24-29 ans'},
+  {id:5,nom:'Kadiatou',age:22,ville:'Kankan',genre:'femme',emoji:'👩🏾',cherche:'homme',tranche:'24-30 ans'},
+  {id:6,nom:'Ousmane',age:34,ville:'Mamou',genre:'homme',emoji:'👨🏾',cherche:'femme',tranche:'26-32 ans'},
+  {id:7,nom:'Aissatou',age:27,ville:"N'Zérékoré",genre:'femme',emoji:'👩🏿',cherche:'homme',tranche:'28-36 ans'},
+  {id:8,nom:'Sekou',age:29,ville:'Faranah',genre:'homme',emoji:'👨🏾',cherche:'femme',tranche:'22-28 ans'},
+];
+
+const REPLIES = [
+  "Bonjour ! Comment vas-tu ? 😊",
+  "Enchanté(e) de te rencontrer sur Guinée Rencontres 🇬🇳",
+  "Tu habites dans quelle partie de la ville ?",
+  "C'est super de discuter avec toi ! ❤️",
+  "Je suis vraiment content(e) d'être ici 💚",
+  "Tu fais quoi dans la vie ?",
+  "J'espère qu'on pourra se rencontrer bientôt 😄",
+  "Tu aimes quoi comme musique guinéenne ?",
+  "La Guinée c'est tellement beau ! 🌿",
+  "On peut continuer à discuter ? 🙏",
+  "Quel est ton plat guinéen préféré ? 😋",
+];
+
+let currentUser = null;
+let convs = {}; // id -> [{from,text,time}]
+let unread = {}; // id -> count
+let activeChatId = null;
+let chatOpen = false;
+let currentTab = 'convs';
+let selAgeVal = '';
+let selGenderVal = '';
+let currentStep = 1;
+let totalUnread = 0;
+
+function now() {
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function initConvs() {
+  [1,3,5].forEach(id=>{
+    const p = PROFILES.find(x=>x.id===id);
+    convs[id] = [{from:'them', text:`Salut ! Je suis ${p.nom}, ${p.age} ans de ${p.ville}. Heureux de te rencontrer ! 😊`, time:'09:42'}];
+    unread[id] = 1;
+  });
+  totalUnread = 3;
+  updateBadges();
+}
+
+function updateBadges() {
+  const nn = document.getElementById('nav-notif');
+  const fb = document.getElementById('float-badge');
+  if (totalUnread > 0) {
+    nn.textContent = totalUnread; nn.style.display = 'flex';
+    fb.textContent = totalUnread; fb.style.display = 'flex';
+  } else {
+    nn.style.display = 'none'; fb.style.display = 'none';
+  }
+}
+
+function renderProfiles(data) {
+  data = data || PROFILES;
+  document.getElementById('profiles-grid').innerHTML = data.map(p=>`
+    <div class="profile-card" onclick="openChatWith(${p.id})">
+      <div class="profile-card-img" style="background:linear-gradient(135deg,rgba(0,154,68,.2),rgba(206,17,38,.1))">
+        <span>${p.emoji}</span><div class="online-dot"></div>
+      </div>
+      <div class="profile-card-info">
+        <div class="profile-card-name">${p.nom}, ${p.age} ans</div>
+        <div class="profile-card-details">Cherche : ${p.cherche} • ${p.tranche}</div>
+        <div class="profile-card-footer">
+          <div class="profile-card-ville">📍 ${p.ville}</div>
+          <button class="btn-msg" onclick="event.stopPropagation();openChatWith(${p.id})">💬 Écrire</button>
         </div>
       </div>
     </div>`).join('');
 }
 
-function openModal(id) {
-  const e = allEvents.find(x=>x.id==id); if(!e) return;
-  document.getElementById('m-emoji').textContent = catEmoji(e.cat);
-  document.getElementById('m-title').textContent = e.nom;
-  document.getElementById('m-date').textContent = formatDate(e.date);
-  document.getElementById('m-heure').textContent = e.heure||'Non précisé';
-  document.getElementById('m-lieu').textContent = e.lieu;
-  document.getElementById('m-desc').textContent = e.description||'';
-  document.getElementById('modal').classList.add('open');
+function filterVille(v) {
+  const f = PROFILES.filter(p=>p.ville===v);
+  document.getElementById('profiles-subtitle').textContent = `Membres à ${v} (${f.length} profils)`;
+  renderProfiles(f.length ? f : PROFILES);
+  document.getElementById('profiles').scrollIntoView({behavior:'smooth'});
 }
-function closeModal(ev) { if(!ev||ev.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); }
 
-// ===== FILTRES =====
-document.getElementById('filters').addEventListener('click', e=>{
-  if (!e.target.dataset.cat) return;
-  currentFilter = e.target.dataset.cat;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  e.target.classList.add('active');
-  renderEvents();
-});
-
-// ===== CALENDRIER =====
-function renderCalendar() {
-  const months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  document.getElementById('cal-title').textContent=`${months[currentMonth]} ${currentYear}`;
-  const firstDay=new Date(currentYear,currentMonth,1).getDay();
-  const totalDays=new Date(currentYear,currentMonth+1,0).getDate();
-  const today=new Date();
-  const eventDays=allEvents.map(e=>{
-    if(!e.date) return null;
-    const d=new Date(e.date+'T00:00:00');
-    return d.getFullYear()===currentYear&&d.getMonth()===currentMonth?d.getDate():null;
-  }).filter(Boolean);
-  const start=(firstDay+6)%7;
-  let html='';
-  for(let i=0;i<start;i++) html+='<div class="cal-day empty"></div>';
-  for(let d=1;d<=totalDays;d++){
-    const isToday=today.getFullYear()===currentYear&&today.getMonth()===currentMonth&&today.getDate()===d;
-    html+=`<div class="cal-day ${isToday?'today':''} ${eventDays.includes(d)?'has-event':''}">${d}</div>`;
+/* ---- CHAT ---- */
+function toggleChat() {
+  if (!chatOpen) {
+    chatOpen = true;
+    document.getElementById('chat-panel').classList.add('open');
+    document.getElementById('chat-bubble-float').classList.remove('show');
+  } else {
+    closeChat();
   }
-  document.getElementById('cal-grid').innerHTML=html;
-}
-function changeMonth(dir) {
-  currentMonth+=dir;
-  if(currentMonth>11){currentMonth=0;currentYear++;}
-  if(currentMonth<0){currentMonth=11;currentYear--;}
-  renderCalendar();
 }
 
-// ===== PROCHAINS ÉVÉNEMENTS =====
-function renderUpcoming() {
-  const today=new Date();
-  const upcoming=allEvents.filter(e=>e.date&&new Date(e.date+'T00:00:00')>=today).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
-  const list=document.getElementById('upcoming-list');
-  if(upcoming.length===0){list.innerHTML=`<p style="color:var(--gris)">Aucun événement à venir.</p>`;return;}
-  list.innerHTML=upcoming.map(e=>{
-    const d=new Date(e.date+'T00:00:00');
-    return `<div class="upcoming-item" onclick="openModal('${e.id}')">
-      <div class="upcoming-date-box"><div class="upcoming-day">${d.getDate()}</div><div class="upcoming-month">${d.toLocaleDateString('fr-FR',{month:'short'})}</div></div>
-      <div class="upcoming-info"><h4>${e.nom}</h4><p>${catEmoji(e.cat)} ${e.heure||''} · ${e.lieu}</p></div>
+function closeChat() {
+  chatOpen = false;
+  document.getElementById('chat-panel').classList.remove('open');
+  if (currentUser) document.getElementById('chat-bubble-float').classList.add('show');
+}
+
+function openChatWith(id) {
+  if (!currentUser) {
+    showToast('📝 Inscris-toi pour envoyer des messages !');
+    openModal();
+    return;
+  }
+  const p = PROFILES.find(x=>x.id===id);
+  if (!p) return;
+  activeChatId = id;
+
+  // Clear unread
+  if (unread[id]) { totalUnread = Math.max(0,totalUnread-(unread[id]||0)); unread[id]=0; updateBadges(); }
+  if (!convs[id]) convs[id] = [];
+
+  // Open panel
+  chatOpen = true;
+  document.getElementById('chat-panel').classList.add('open');
+  document.getElementById('chat-bubble-float').classList.remove('show');
+
+  // Header
+  document.getElementById('chat-header-avatar').textContent = p.emoji;
+  document.getElementById('chat-header-name').textContent = p.nom+', '+p.age+' ans';
+  document.getElementById('chat-header-status').textContent = '● En ligne • '+p.ville;
+  document.getElementById('back-name').textContent = p.emoji+' '+p.nom;
+
+  // Show messages view
+  document.getElementById('chat-tabs').style.display = 'none';
+  document.getElementById('conv-list').style.display = 'none';
+  document.getElementById('online-list').style.display = 'none';
+  document.getElementById('chat-messages-view').style.display = 'flex';
+
+  renderMessages(id);
+  document.getElementById('chat-input').focus();
+}
+
+function backToList() {
+  activeChatId = null;
+  document.getElementById('chat-tabs').style.display = 'flex';
+  document.getElementById('chat-messages-view').style.display = 'none';
+  document.getElementById('chat-header-avatar').textContent = '💬';
+  document.getElementById('chat-header-name').textContent = 'Messages';
+  document.getElementById('chat-header-status').textContent = '● En ligne';
+  showListView();
+}
+
+function showListView() {
+  if (currentTab === 'convs') {
+    document.getElementById('conv-list').style.display = 'block';
+    document.getElementById('online-list').style.display = 'none';
+    renderConvList();
+  } else {
+    document.getElementById('online-list').style.display = 'block';
+    document.getElementById('conv-list').style.display = 'none';
+    renderOnlineList();
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.chat-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='convs')||(i===1&&tab==='online')));
+  showListView();
+}
+
+function renderConvList() {
+  const el = document.getElementById('conv-list');
+  const withConvs = PROFILES.filter(p => convs[p.id]&&convs[p.id].length>0);
+  if (!withConvs.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:rgba(255,255,255,.3);font-size:.9rem">Aucune conversation.<br>Clique <strong style="color:var(--vert)">Écrire</strong> sur un profil !</div>`;
+    return;
+  }
+  el.innerHTML = withConvs.map(p=>{
+    const msgs = convs[p.id]; const last = msgs[msgs.length-1]; const u = unread[p.id]||0;
+    return `<div class="conv-item" onclick="openChatWith(${p.id})">
+      <div class="conv-avatar">${p.emoji}<div class="dot"></div></div>
+      <div class="conv-info">
+        <div class="conv-name">${p.nom}, ${p.age} ans</div>
+        <div class="conv-preview">${last.from==='me'?'Toi: ':''}${last.text}</div>
+      </div>
+      <div class="conv-meta"><div>${last.time}</div>${u?`<div class="conv-unread">${u}</div>`:''}</div>
     </div>`;
   }).join('');
 }
 
-// ===== SOUMETTRE ÉVÉNEMENT =====
-async function addEvent() {
-  const nom=document.getElementById('f-nom').value.trim();
-  const auteur=document.getElementById('f-auteur').value.trim();
-  const cat=document.getElementById('f-cat').value;
-  const date=document.getElementById('f-date').value;
-  const heure=document.getElementById('f-heure').value;
-  const lieu=document.getElementById('f-lieu').value.trim();
-  const desc=document.getElementById('f-desc').value.trim();
-  if(!nom||!auteur||!date||!lieu){showToast('⚠️ Remplissez le nom, votre nom, la date et le lieu !',true);return;}
-  const btn=document.getElementById('submit-btn');
-  btn.disabled=true; btn.textContent='⏳ Envoi en cours...';
-  const {error}=await sb.from('evenements').insert([{nom,auteur,cat,date,heure:heure||'08:00',lieu,description:desc||'Aucune description.',status:'pending'}]);
-  if(error){showToast('❌ Erreur : '+error.message,true);}
-  else {
-    ['f-nom','f-auteur','f-date','f-heure','f-lieu','f-desc'].forEach(id=>document.getElementById(id).value='');
-    showToast('✅ Soumis ! Votre événement sera visible après validation par l\'admin.');
-    goTo('#evenements');
-  }
-  btn.disabled=false; btn.textContent='🚀 Soumettre l\'événement';
+function renderOnlineList() {
+  document.getElementById('online-list').innerHTML = PROFILES.map(p=>`
+    <div class="conv-item" onclick="openChatWith(${p.id})">
+      <div class="conv-avatar">${p.emoji}<div class="dot"></div></div>
+      <div class="conv-info">
+        <div class="conv-name">${p.nom}, ${p.age} ans</div>
+        <div class="conv-preview">📍 ${p.ville} • Cherche : ${p.cherche}</div>
+      </div>
+      <div class="conv-meta"><button class="btn-msg" style="font-size:.7rem;padding:5px 10px" onclick="event.stopPropagation();openChatWith(${p.id})">Écrire</button></div>
+    </div>`).join('');
 }
 
-// ===== INIT =====
-renderCalendar();
-loadEvents();
+function renderMessages(id) {
+  const area = document.getElementById('messages-area');
+  const typing = document.getElementById('typing-indicator');
+  const msgs = convs[id] || [];
+  area.innerHTML = `<div class="day-sep">Aujourd'hui</div>`;
+  msgs.forEach(m=>{
+    const div = document.createElement('div');
+    div.className = 'msg '+(m.from==='me'?'sent':'recv');
+    div.innerHTML = `<div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div>`;
+    area.appendChild(div);
+  });
+  area.appendChild(typing);
+  area.scrollTop = 99999;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !activeChatId) return;
+  input.value = '';
+  if (!convs[activeChatId]) convs[activeChatId] = [];
+  convs[activeChatId].push({from:'me', text, time:now()});
+  renderMessages(activeChatId);
+
+  // Typing then reply
+  const typing = document.getElementById('typing-indicator');
+  typing.classList.add('show');
+  document.getElementById('messages-area').scrollTop = 99999;
+  setTimeout(()=>{
+    typing.classList.remove('show');
+    const reply = REPLIES[Math.floor(Math.random()*REPLIES.length)];
+    convs[activeChatId].push({from:'them', text:reply, time:now()});
+    renderMessages(activeChatId);
+  }, 1200 + Math.random()*1500);
+}
+
+function handleKey(e) { if(e.key==='Enter') sendMessage(); }
+
+function insertEmoji(e) {
+  const inp = document.getElementById('chat-input');
+  inp.value += e; inp.focus();
+}
+
+/* ---- MODAL ---- */
+function openModal() {
+  document.getElementById('overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function updateProgress(s) {
+  for(let i=1;i<=3;i++){
+    const b=document.getElementById('step-bar-'+i);
+    b.className='progress-step';
+    if(i<s) b.classList.add('done'); else if(i===s) b.classList.add('active');
+  }
+}
+function goStep(n) {
+  if(n===2){
+    if(!document.getElementById('prenom').value.trim()||!document.getElementById('nom').value.trim()||!document.getElementById('age').value||!document.getElementById('genre').value||!document.getElementById('ville-habite').value)
+    {alert('Merci de remplir tous les champs obligatoires (*)');return;}
+    if(document.getElementById('age').value<18){alert('Tu dois avoir au moins 18 ans.');return;}
+  }
+  if(n===3){
+    if(!document.getElementById('ville-vise').value||!selAgeVal||!selGenderVal){alert('Complète tous les champs de recherche.');return;}
+  }
+  document.getElementById('step'+currentStep).classList.remove('active');
+  currentStep=n;
+  document.getElementById('step'+currentStep).classList.add('active');
+  updateProgress(n);
+}
+function selAge(el,v){
+  document.querySelectorAll('.age-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selAgeVal=v;
+}
+function selGender(el,v){
+  document.querySelectorAll('.gender-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selGenderVal=v;
+}
+function submitForm() {
+  if(document.getElementById('password').value.length<6){alert('Mot de passe : minimum 6 caractères.');return;}
+  const prenom=document.getElementById('prenom').value.trim();
+  const nom=document.getElementById('nom').value.trim();
+  const age=document.getElementById('age').value;
+  const genre=document.getElementById('genre').value;
+  const vh=document.getElementById('ville-habite').value;
+  const vv=document.getElementById('ville-vise').value;
+  currentUser={prenom,nom,age,genre,vh,vv};
+
+  document.getElementById('step3').classList.remove('active');
+  document.getElementById('progress-bar').style.display='none';
+  document.getElementById('success-name').textContent=`Bienvenue, ${prenom} ! 🎉`;
+  document.getElementById('profile-summary').innerHTML=`
+    <div class="profile-row"><span class="profile-key">Nom complet</span><span class="profile-val">${prenom} ${nom}</span></div>
+    <div class="profile-row"><span class="profile-key">Âge</span><span class="profile-val">${age} ans</span></div>
+    <div class="profile-row"><span class="profile-key">Genre</span><span class="profile-val">${genre}</span></div>
+    <div class="profile-row"><span class="profile-key">Ta ville</span><span class="profile-val">📍 ${vh}</span></div>
+    <div class="profile-row"><span class="profile-key">Ville recherchée</span><span class="profile-val">🎯 ${vv}</span></div>
+    <div class="profile-row"><span class="profile-key">Tranche souhaitée</span><span class="profile-val">${selAgeVal}</span></div>
+    <div class="profile-row"><span class="profile-key">Recherche</span><span class="profile-val">Un(e) ${selGenderVal}</span></div>`;
+  document.getElementById('success-screen').classList.add('active');
+  document.getElementById('btn-chat-nav').classList.add('visible');
+
+  const emoji = genre==='femme'?'👩🏾':'👨🏾';
+  const newId = Date.now();
+  PROFILES.unshift({id:newId,nom:prenom,age:parseInt(age),ville:vh,genre,emoji,cherche:selGenderVal,tranche:selAgeVal});
+  renderProfiles();
+  document.getElementById('chat-bubble-float').classList.add('show');
+}
+
+function afterRegister() {
+  closeModal();
+  // Simulate a welcome message from Fatoumata after 2s
+  setTimeout(()=>{
+    if (!convs[1]) convs[1] = [];
+    const prenom = currentUser ? currentUser.prenom : '';
+    convs[1].push({from:'them', text:`Salut ${prenom} ! Bienvenue sur Guinée Rencontres 🇬🇳 Je suis contente de te rencontrer ! 😊`, time:now()});
+    unread[1] = (unread[1]||0)+1;
+    totalUnread++;
+    updateBadges();
+    showToast('💬 Chael t\'a envoyé un message !');
+  }, 2000);
+  toggleChat();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+// INIT
+initConvs();
+renderProfiles();
+</script>
+
+<!-- ===== PWA CODE ===== -->
+<script>
+// 1. Générer l'icône SVG en base64
+const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#0d1b14"/>
+  <rect width="512" height="512" rx="100" fill="url(#g)"/>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#009a44"/>
+      <stop offset="100%" style="stop-color:#0d1b14"/>
+    </linearGradient>
+  </defs>
+  <text x="256" y="200" text-anchor="middle" font-family="Georgia,serif" font-size="130" font-weight="900" fill="#009a44">G</text>
+  <text x="256" y="340" text-anchor="middle" font-family="Georgia,serif" font-size="80" font-weight="700" fill="#fcd116">Rencontres</text>
+  <text x="256" y="420" text-anchor="middle" font-family="Georgia,serif" font-size="50" fill="#ffffff" opacity="0.6">🇬🇳</text>
+</svg>`;
+const iconB64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(iconSVG)));
+
+// Appliquer l'icône Apple Touch
+document.getElementById('apple-icon').href = iconB64;
+
+// 2. Créer le manifest dynamiquement
+const manifest = {
+  name: "Guinée Rencontres",
+  short_name: "GR 💚",
+  description: "La plateforme de rencontres N°1 en Guinée",
+  start_url: "./",
+  display: "standalone",
+  background_color: "#0d1b14",
+  theme_color: "#009a44",
+  orientation: "portrait",
+  lang: "fr",
+  categories: ["social", "lifestyle"],
+  icons: [
+    { src: iconB64, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+    { src: iconB64, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+  ],
+  screenshots: [],
+  shortcuts: [
+    { name: "Mes messages", short_name: "Messages", description: "Voir mes conversations", url: "./#messages", icons: [{ src: iconB64, sizes: "96x96" }] },
+    { name: "Profils", short_name: "Profils", description: "Voir les profils", url: "./#profiles", icons: [{ src: iconB64, sizes: "96x96" }] }
+  ]
+};
+
+const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+const manifestURL = URL.createObjectURL(manifestBlob);
+document.getElementById('pwa-manifest').href = manifestURL;
+
+// 3. Service Worker inline (cache-first)
+const swCode = `
+const CACHE = 'guinee-rencontres-v1';
+const ASSETS = ['/'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() =>
+      new Response('<h1 style="font-family:sans-serif;text-align:center;padding:40px;color:#009a44">📵 Pas de connexion<br><small>Guinée Rencontres</small></h1>', {headers:{'Content-Type':'text/html'}})
+    ))
+  );
+});
+
+self.addEventListener('push', e => {
+  const data = e.data ? e.data.json() : {title:'Guinée Rencontres', body:'Nouveau message !'};
+  e.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: '${iconB64}',
+    badge: '${iconB64}',
+    vibrate: [200, 100, 200],
+    tag: 'gr-notif',
+    renotify: true
+  }));
+});
+`;
+
+if ('serviceWorker' in navigator) {
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swURL = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL, {scope: '/'})
+    .then(reg => console.log('✅ Service Worker enregistré', reg.scope))
+    .catch(err => console.warn('SW non enregistré (normal en local):', err));
+}
+
+// 4. Bannière d'installation
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Afficher la bannière après 3 secondes
+  setTimeout(() => {
+    const banner = document.getElementById('pwa-banner');
+    banner.style.display = 'flex';
+    // Ajuster le padding du body pour ne pas cacher le contenu
+    document.body.style.paddingBottom = '90px';
+  }, 3000);
+});
+
+function installPWA() {
+  if (!deferredPrompt) {
+    // iOS — afficher les instructions
+    showIOSInstallGuide();
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(result => {
+    if (result.outcome === 'accepted') {
+      showToast('🎉 App installée avec succès !');
+      document.getElementById('pwa-banner').style.display = 'none';
+      document.body.style.paddingBottom = '0';
+    }
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  showToast('✅ Guinée Rencontres installée sur ton téléphone !');
+  document.getElementById('pwa-banner').style.display = 'none';
+  document.body.style.paddingBottom = '0';
+  deferredPrompt = null;
+});
+
+// Guide pour iOS (Safari)
+function showIOSInstallGuide() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+
+  let msg = '';
+  if (isIOS && isSafari) {
+    msg = '📱 Sur iPhone :\n1. Appuie sur le bouton Partager ⬆️\n2. Choisis "Sur l\'écran d\'accueil"\n3. Appuie sur "Ajouter"';
+  } else if (isIOS) {
+    msg = '📱 Pour installer sur iPhone, ouvre ce site dans Safari puis appuie sur ⬆️ → "Sur l\'écran d\'accueil"';
+  } else {
+    msg = '📱 Sur Android :\nOuvre le menu Chrome (⋮) et appuie sur "Ajouter à l\'écran d\'accueil"';
+  }
+  alert(msg);
+}
+
+// Détection iOS pour afficher le guide manuellement
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  setTimeout(() => {
+    const banner = document.getElementById('pwa-banner');
+    banner.style.display = 'flex';
+    banner.querySelector('button[onclick="installPWA()"]').textContent = 'Comment installer ?';
+    document.body.style.paddingBottom = '90px';
+  }, 3000);
+}
+
+// Si déjà installé en mode standalone → cacher la bannière
+if (isStandalone) {
+  document.getElementById('pwa-banner').style.display = 'none';
+  // Adapter l'UI pour l'app installée
+  document.documentElement.style.setProperty('--safe-area-top', 'env(safe-area-inset-top, 0px)');
+}
 </script>
 </body>
 </html>
