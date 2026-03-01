@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Guinée Rencontres</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--vert:#009a44;--jaune:#fcd116;--rouge:#ce1126;--dark:#0d1b14;--card:#132018;--card2:#1a2c20;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--dark);color:#fff;min-height:100vh;}
+
+/* LOGIN */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--card);border:1px solid rgba(0,154,68,.3);border-radius:22px;padding:40px 32px;width:100%;max-width:380px;text-align:center;}
+.login-icon{font-size:3rem;margin-bottom:16px;}
+.login-title{font-size:1.6rem;font-weight:900;margin-bottom:6px;}
+.login-title span{color:var(--vert);}
+.login-sub{color:rgba(255,255,255,.5);font-size:.88rem;margin-bottom:28px;}
+.login-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;padding:12px 16px;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.9rem;outline:none;margin-bottom:14px;transition:border-color .2s;}
+.login-input:focus{border-color:var(--vert);}
+.login-input::placeholder{color:rgba(255,255,255,.3);}
+.btn-login{width:100%;background:linear-gradient(135deg,var(--vert),#00c257);color:#fff;border:none;padding:13px;border-radius:11px;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .3s;}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,154,68,.4);}
+.login-error{color:var(--rouge);font-size:.82rem;margin-top:10px;display:none;}
+
+/* ADMIN PANEL */
+.admin-panel{display:none;min-height:100vh;}
+.admin-nav{background:rgba(13,27,20,.98);border-bottom:1px solid rgba(0,154,68,.3);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.admin-logo{font-weight:900;font-size:1.1rem;display:flex;align-items:center;gap:8px;}
+.admin-logo-badge{background:var(--rouge);color:#fff;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:900;letter-spacing:1px;}
+.admin-user{display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.6);}
+.btn-logout{background:rgba(206,17,38,.2);color:var(--rouge);border:1px solid var(--rouge);padding:6px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.8rem;transition:all .2s;}
+.btn-logout:hover{background:var(--rouge);color:#fff;}
+
+.admin-body{padding:24px;max-width:1200px;margin:0 auto;}
+.admin-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.admin-tab{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;transition:all .2s;}
+.admin-tab.active{background:var(--vert);border-color:var(--vert);color:#fff;}
+.admin-tab:hover:not(.active){border-color:var(--vert);color:var(--vert);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--card);border:1px solid rgba(0,154,68,.2);border-radius:16px;padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--vert),var(--jaune));}
+.stat-icon{font-size:1.8rem;margin-bottom:10px;}
+.stat-value{font-size:2.2rem;font-weight:900;color:var(--jaune);}
+.stat-label{font-size:.8rem;color:rgba(255,255,255,.5);margin-top:4px;}
+.stat-change{font-size:.75rem;color:var(--vert);margin-top:6px;}
+
+/* CHART */
+.chart-section{background:var(--card);border:1px solid rgba(0,154,68,.2);border-radius:16px;padding:20px;margin-bottom:20px;}
+.chart-title{font-weight:700;margin-bottom:16px;font-size:1rem;}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:140px;}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar{border-radius:4px 4px 0 0;width:100%;transition:all .5s;min-height:4px;background:linear-gradient(180deg,var(--vert),#004d22);}
+.bar-label{font-size:.62rem;color:rgba(255,255,255,.5);text-align:center;word-break:break-word;}
+.bar-val{font-size:.68rem;font-weight:700;color:var(--jaune);}
+
+/* TABLE */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.section-title{font-weight:700;font-size:1.1rem;}
+.search-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;padding:8px 14px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;width:200px;transition:border-color .2s;}
+.search-box:focus{border-color:var(--vert);}
+.search-box::placeholder{color:rgba(255,255,255,.3);}
+.data-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.data-table th{background:rgba(0,154,68,.15);padding:10px 12px;text-align:left;font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.6);border-bottom:1px solid rgba(0,154,68,.2);}
+.data-table td{padding:12px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle;}
+.data-table tr:hover td{background:rgba(0,154,68,.05);}
+.avatar-cell{display:flex;align-items:center;gap:10px;}
+.avatar-sm{width:36px;height:36px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:rgba(0,154,68,.2);flex-shrink:0;}
+.avatar-sm img{width:100%;height:100%;object-fit:cover;}
+.badge{padding:3px 9px;border-radius:8px;font-size:.72rem;font-weight:700;}
+.badge-vert{background:rgba(0,154,68,.2);color:var(--vert);}
+.badge-rouge{background:rgba(206,17,38,.2);color:var(--rouge);}
+.badge-jaune{background:rgba(252,209,22,.15);color:var(--jaune);}
+.btn-del{background:rgba(206,17,38,.15);color:var(--rouge);border:1px solid rgba(206,17,38,.3);padding:5px 10px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:700;transition:all .2s;}
+.btn-del:hover{background:var(--rouge);color:#fff;}
+.btn-view{background:rgba(0,154,68,.15);color:var(--vert);border:1px solid rgba(0,154,68,.3);padding:5px 10px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:700;transition:all .2s;margin-right:4px;}
+.btn-view:hover{background:var(--vert);color:#fff;}
+.empty-state{text-align:center;padding:40px;color:rgba(255,255,255,.3);}
+.empty-state .icon{font-size:2.5rem;margin-bottom:10px;}
+.loading{text-align:center;padding:30px;color:rgba(255,255,255,.4);}
+.loading-dots{display:inline-flex;gap:6px;}
+.loading-dot{width:8px;height:8px;background:var(--vert);border-radius:50%;animation:bounce .8s infinite;}
+.loading-dot:nth-child(2){animation-delay:.15s}.loading-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+.table-container{background:var(--card);border:1px solid rgba(0,154,68,.15);border-radius:16px;overflow:hidden;}
+.msg-bubble-admin{background:rgba(255,255,255,.07);border-radius:8px;padding:6px 10px;font-size:.82rem;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.refresh-btn{background:rgba(0,154,68,.15);color:var(--vert);border:1px solid rgba(0,154,68,.3);padding:7px 14px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;transition:all .2s;}
+.refresh-btn:hover{background:var(--vert);color:#fff;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--vert);border-radius:12px;padding:10px 20px;font-size:.88rem;font-weight:600;z-index:500;transition:transform .4s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;}
+.confirm-overlay.active{display:flex;}
+.confirm-box{background:var(--card);border:1px solid var(--rouge);border-radius:16px;padding:28px 24px;width:100%;max-width:340px;text-align:center;}
+.confirm-title{font-weight:700;font-size:1.1rem;margin-bottom:10px;}
+.confirm-msg{color:rgba(255,255,255,.6);font-size:.88rem;margin-bottom:22px;}
+.confirm-btns{display:flex;gap:10px;}
+.btn-cancel{flex:1;background:rgba(255,255,255,.08);color:#fff;border:none;padding:11px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+.btn-confirm-del{flex:1;background:var(--rouge);color:#fff;border:none;padding:11px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+@media(max-width:600px){.admin-body{padding:16px;}.stats-grid{grid-template-columns:1fr 1fr;}.admin-tabs{gap:6px;}.admin-tab{padding:7px 12px;font-size:.78rem;}.search-box{width:150px;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title"><span>Guinée</span> Rencontres</div>
+    <div class="login-sub">Panneau Administrateur</div>
+    <input type="text" class="login-input" id="login-user" placeholder="Nom d'utilisateur" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" class="login-input" id="login-pass" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">🔑 Connexion</button>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-nav">
+    <div class="admin-logo">
+      🇬🇳 Guinée Rencontres <span class="admin-logo-badge">ADMIN</span>
+    </div>
+    <div class="admin-user">
+      <span>👤 Admin</span>
+      <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminTab('stats')">📊 Statistiques</div>
+      <div class="admin-tab" onclick="switchAdminTab('membres')">👥 Membres</div>
+      <div class="admin-tab" onclick="switchAdminTab('messages')">💬 Messages</div>
+    </div>
+
+    <!-- STATS TAB -->
+    <div id="tab-stats">
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="stat-membres">—</div><div class="stat-label">Membres inscrits</div></div>
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-value" id="stat-messages">—</div><div class="stat-label">Messages envoyés</div></div>
+        <div class="stat-card"><div class="stat-icon">👩</div><div class="stat-value" id="stat-femmes">—</div><div class="stat-label">Femmes</div></div>
+        <div class="stat-card"><div class="stat-icon">👨</div><div class="stat-value" id="stat-hommes">—</div><div class="stat-label">Hommes</div></div>
+      </div>
+
+      <div class="chart-section">
+        <div class="chart-title">📍 Membres par ville</div>
+        <div class="bar-chart" id="ville-chart"></div>
+      </div>
+
+      <div class="chart-section">
+        <div class="chart-title">🔍 Recherches par genre</div>
+        <div class="bar-chart" id="cherche-chart"></div>
+      </div>
+    </div>
+
+    <!-- MEMBRES TAB -->
+    <div id="tab-membres" style="display:none">
+      <div class="section-header">
+        <div class="section-title">👥 Tous les membres</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="text" class="search-box" id="search-membres" placeholder="🔍 Rechercher..." oninput="filterMembres()">
+          <button class="refresh-btn" onclick="loadMembres()">🔄 Actualiser</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <div id="membres-content"><div class="loading"><div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div id="tab-messages" style="display:none">
+      <div class="section-header">
+        <div class="section-title">💬 Tous les messages</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="text" class="search-box" id="search-messages" placeholder="🔍 Rechercher..." oninput="filterMessages()">
+          <button class="refresh-btn" onclick="loadMessages()">🔄 Actualiser</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <div id="messages-content"><div class="loading"><div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title">⚠️ Confirmer la suppression</div>
+    <div class="confirm-msg" id="confirm-msg">Es-tu sûr de vouloir supprimer cet élément ?</div>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-confirm-del" id="btn-confirm-del">🗑️ Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://ggvicqhpggckizgbgyuo.supabase.co';
+const SUPA_KEY = 'sb_publishable_lzVjO9TdylceZXb52q0gZQ_7raLfyaO';
+
+// === AUTH ===
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'guinee2024';
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadAll();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    setTimeout(() => document.getElementById('login-error').style.display = 'none', 2000);
+  }
+}
+
+function doLogout() {
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+// === SUPABASE ===
+async function supaFetch(endpoint, options={}) {
+  try {
+    const res = await fetch(SUPA_URL + endpoint, {
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': options.prefer || '',
+      }, ...options
+    });
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  } catch(e) { console.warn(e); return []; }
+}
+
+async function supaDelete(table, id) {
+  return await supaFetch(`/rest/v1/${table}?id=eq.${id}`, { method: 'DELETE', prefer: 'return=minimal' });
+}
+
+// === DATA ===
+let allMembres = [];
+let allMessages = [];
+
+async function loadAll() {
+  await Promise.all([loadStats(), loadMembres(), loadMessages()]);
+}
+
+async function loadStats() {
+  const [membres, messages] = await Promise.all([
+    supaFetch('/rest/v1/utilisateurs?select=*'),
+    supaFetch('/rest/v1/messages?select=*')
+  ]);
+  allMembres = membres || [];
+  allMessages = messages || [];
+
+  document.getElementById('stat-membres').textContent = allMembres.length;
+  document.getElementById('stat-messages').textContent = allMessages.length;
+  document.getElementById('stat-femmes').textContent = allMembres.filter(m => m.genre === 'femme').length;
+  document.getElementById('stat-hommes').textContent = allMembres.filter(m => m.genre === 'homme').length;
+
+  // Chart villes
+  const villes = {};
+  allMembres.forEach(m => { villes[m.ville] = (villes[m.ville] || 0) + 1; });
+  renderBarChart('ville-chart', villes);
+
+  // Chart cherche
+  const cherche = {};
+  allMembres.forEach(m => { if(m.cherche) cherche[m.cherche] = (cherche[m.cherche] || 0) + 1; });
+  renderBarChart('cherche-chart', cherche);
+}
+
+function renderBarChart(id, data) {
+  const el = document.getElementById(id);
+  const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
+  const max = Math.max(...entries.map(e => e[1]), 1);
+  if (!entries.length) { el.innerHTML = '<div style="color:rgba(255,255,255,.3);padding:20px;font-size:.85rem">Pas encore de données</div>'; return; }
+  el.innerHTML = entries.map(([k, v]) => `
+    <div class="bar-wrap">
+      <div class="bar-val">${v}</div>
+      <div class="bar" style="height:${Math.max(8, (v/max)*120)}px"></div>
+      <div class="bar-label">${k}</div>
+    </div>`).join('');
+}
+
+async function loadMembres() {
+  const data = await supaFetch('/rest/v1/utilisateurs?select=*&order=created_at.desc');
+  allMembres = data || [];
+  renderMembres(allMembres);
+}
+
+function renderMembres(data) {
+  const el = document.getElementById('membres-content');
+  if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="icon">👥</div><div>Aucun membre inscrit</div></div>'; return; }
+  el.innerHTML = `<table class="data-table">
+    <thead><tr>
+      <th>Membre</th><th>Âge</th><th>Genre</th><th>Ville</th><th>Cherche</th><th>Inscrit le</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${data.map(m => `
+      <tr>
+        <td><div class="avatar-cell">
+          <div class="avatar-sm">${m.photo_url ? `<img src="${m.photo_url}" alt="${m.prenom}">` : (m.genre==='femme'?'👩🏾':'👨🏾')}</div>
+          <div><div style="font-weight:700">${m.prenom} ${m.nom||''}</div><div style="font-size:.72rem;color:rgba(255,255,255,.4)">${m.bio||''}</div></div>
+        </div></td>
+        <td>${m.age} ans</td>
+        <td><span class="badge ${m.genre==='femme'?'badge-rouge':'badge-vert'}">${m.genre}</span></td>
+        <td>📍 ${m.ville||'—'}</td>
+        <td>${m.cherche||'—'}</td>
+        <td style="font-size:.75rem;color:rgba(255,255,255,.4)">${m.created_at ? new Date(m.created_at).toLocaleDateString('fr-FR') : '—'}</td>
+        <td><button class="btn-del" onclick="confirmDelete('utilisateurs','${m.id}','${m.prenom} ${m.nom||''}')">🗑️ Suppr.</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function filterMembres() {
+  const q = document.getElementById('search-membres').value.toLowerCase();
+  renderMembres(allMembres.filter(m =>
+    (m.prenom||'').toLowerCase().includes(q) ||
+    (m.nom||'').toLowerCase().includes(q) ||
+    (m.ville||'').toLowerCase().includes(q) ||
+    (m.genre||'').toLowerCase().includes(q)
+  ));
+}
+
+async function loadMessages() {
+  const data = await supaFetch('/rest/v1/messages?select=*&order=created_at.desc&limit=100');
+  allMessages = data || [];
+  renderMessages(allMessages);
+}
+
+function renderMessages(data) {
+  const el = document.getElementById('messages-content');
+  if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="icon">💬</div><div>Aucun message envoyé</div></div>'; return; }
+  el.innerHTML = `<table class="data-table">
+    <thead><tr>
+      <th>Expéditeur</th><th>Destinataire</th><th>Message</th><th>Date</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${data.map(m => `
+      <tr>
+        <td><span style="font-weight:700;color:var(--vert)">${m.expediteur||'—'}</span></td>
+        <td><span style="font-weight:700">${m.destinataire||'—'}</span></td>
+        <td><div class="msg-bubble-admin">${m.contenu||'—'}</div></td>
+        <td style="font-size:.75rem;color:rgba(255,255,255,.4)">${m.created_at ? new Date(m.created_at).toLocaleString('fr-FR') : '—'}</td>
+        <td><button class="btn-del" onclick="confirmDelete('messages','${m.id}','ce message')">🗑️ Suppr.</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function filterMessages() {
+  const q = document.getElementById('search-messages').value.toLowerCase();
+  renderMessages(allMessages.filter(m =>
+    (m.expediteur||'').toLowerCase().includes(q) ||
+    (m.destinataire||'').toLowerCase().includes(q) ||
+    (m.contenu||'').toLowerCase().includes(q)
+  ));
+}
+
+// === TABS ===
+function switchAdminTab(tab) {
+  ['stats','membres','messages'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.admin-tab').forEach((el,i) => {
+    el.classList.toggle('active', ['stats','membres','messages'][i] === tab);
+  });
+  if (tab === 'membres') loadMembres();
+  if (tab === 'messages') loadMessages();
+  if (tab === 'stats') loadStats();
+}
+
+// === DELETE ===
+let pendingDelete = null;
+
+function confirmDelete(table, id, name) {
+  pendingDelete = { table, id };
+  document.getElementById('confirm-msg').textContent = `Supprimer "${name}" définitivement ?`;
+  document.getElementById('confirm-overlay').classList.add('active');
+  document.getElementById('btn-confirm-del').onclick = async () => {
+    await supaDelete(pendingDelete.table, pendingDelete.id);
+    closeConfirm();
+    showToast('✅ Supprimé avec succès !');
+    if (pendingDelete.table === 'utilisateurs') { await loadMembres(); await loadStats(); }
+    else { await loadMessages(); await loadStats(); }
+  };
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('active');
+  pendingDelete = null;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
